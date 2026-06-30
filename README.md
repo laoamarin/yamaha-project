@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Yamaha Concert Registration
 
-## Getting Started
+ระบบลงทะเบียนนักแสดงงานคอนเสิร์ต พร้อมระบบเกียรติบัตร
 
-First, run the development server:
+**Stack:** Next.js 14 (App Router) · TypeScript · Tailwind CSS · Supabase
+
+## Features
+
+- **Public** — ค้นหาชื่อนักเรียน + ลงทะเบียน + ดาวน์โหลดเกียรติบัตร
+- **Admin** — สร้างงาน, นำเข้า Excel, dashboard realtime, ออกแบบเกียรติบัตร, พิมพ์ PDF
+
+## Local Development
 
 ```bash
+npm install
+cp .env.local.example .env.local
+# ใส่ NEXT_PUBLIC_SUPABASE_URL และ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+เปิด [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Supabase Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+รัน SQL ตามลำดับใน Supabase SQL Editor:
 
-## Learn More
+1. `supabase/schema.sql`
+2. `supabase/storage.sql`
+3. `supabase/admin-policies.sql`
 
-To learn more about Next.js, take a look at the following resources:
+สร้าง admin user ที่ **Authentication → Users → Add user**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+รายละเอียดเพิ่มเติม: [supabase/README.md](supabase/README.md)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deploy to Vercel
 
-## Deploy on Vercel
+1. Push repo นี้ขึ้น GitHub
+2. Import project ใน [vercel.com](https://vercel.com) → เลือก repo `yamaha-project`
+3. ตั้ง **Environment Variables**:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+4. Deploy
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Routes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Route | Description |
+|-------|-------------|
+| `/event/[qr_token]` | หน้าลงทะเบียน (public) |
+| `/admin/login` | Admin login |
+| `/admin/events` | จัดการงาน |
