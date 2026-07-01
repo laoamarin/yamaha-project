@@ -54,3 +54,60 @@ export async function createEvent(formData: FormData) {
   revalidatePath("/admin/events");
   redirect("/admin/events");
 }
+
+export async function importStudents(
+  eventId: string,
+  students: {
+    full_name: string;
+    nickname: string | null;
+    instrument: string | null;
+    teacher_name: string | null;
+  }[]
+) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "กรุณาเข้าสู่ระบบ" };
+  }
+
+  if (!students.length) {
+    return { error: "ไม่มีข้อมูลให้นำเข้า" };
+  }
+
+  const { data: event, error: eventError } = await supabase
+    .from("events")
+    .select("id")
+    .eq("id", eventId)
+    .maybeSingle();
+
+  if (eventError || !event) {
+    return { error: "ไม่พบงานนี้" };
+  }
+
+  const rows = students.map((s) => ({
+    event_id: eventId,
+    full_name: s.full_name,
+    nickname: s.nickname,
+    instrument: s.instrument,
+    teacher_name: s.teacher_name,
+  }));
+
+  const CHUNK = 50;
+  let inserted = 0;
+
+  for (let i = 0; i < rows.length; i += CHUNK) {
+    const chunk = rows.slice(i, i + CHUNK);
+    const { error } = await supabase.from("students").insert(chunk);
+    if (error) {
+      return { error: error.message, inserted };
+    }
+    inserted += chunk.length;
+  }
+
+  revalidatePath(`/admin/events/${eventId}/import`);
+  revalidatePath("/admin/events");
+  return { success: true, inserted };
+}

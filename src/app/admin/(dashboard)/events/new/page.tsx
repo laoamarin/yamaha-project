@@ -2,8 +2,20 @@
 
 import { createEvent } from "@/app/admin/actions";
 import { ExtraFieldsEditor } from "@/components/admin/ExtraFieldsEditor";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { LinkButton } from "@/components/ui/link-button";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import type { ExtraField } from "@/types/database";
-import Link from "next/link";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { useState } from "react";
 
 export default function NewEventPage() {
@@ -34,68 +46,76 @@ export default function NewEventPage() {
   return (
     <div className="max-w-2xl">
       <div className="mb-6">
-        <Link
-          href="/admin/events"
-          className="text-sm text-slate-500 hover:text-indigo-600"
-        >
-          ← กลับ
-        </Link>
-        <h1 className="text-2xl font-bold text-slate-900 mt-2">สร้างงานใหม่</h1>
+        <LinkButton variant="ghost" size="sm" href="/admin/events" className="-ml-2 mb-2">
+          <ArrowLeft className="size-4" />
+          กลับ
+        </LinkButton>
+        <h1 className="text-2xl font-semibold tracking-tight">สร้างงานใหม่</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          กำหนดรายละเอียดงานและช่องข้อมูลตอนลงทะเบียน
+        </p>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white border border-slate-200 rounded-xl p-6 space-y-6"
-      >
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
-            ชื่องาน <span className="text-red-500">*</span>
-          </label>
-          <input
-            name="name"
-            type="text"
-            required
-            placeholder="คอนเสิร์ต Yamaha ประจำปี 2569"
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-        </div>
+      <Card className="shadow-sm">
+        <CardHeader>
+          <CardTitle className="text-base">ข้อมูลงาน</CardTitle>
+          <CardDescription>ชื่องานและวันที่จัด</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="name">
+                ชื่องาน <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="name"
+                name="name"
+                type="text"
+                required
+                placeholder="คอนเสิร์ต Yamaha ประจำปี 2569"
+                className="h-11"
+              />
+            </div>
 
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
-            วันที่จัดงาน <span className="text-red-500">*</span>
-          </label>
-          <input
-            name="event_date"
-            type="date"
-            required
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-        </div>
+            <div className="space-y-2">
+              <Label htmlFor="event_date">
+                วันที่จัดงาน <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="event_date"
+                name="event_date"
+                type="date"
+                required
+                className="h-11"
+              />
+            </div>
 
-        <ExtraFieldsEditor fields={extraFields} onChange={setExtraFields} />
+            <ExtraFieldsEditor fields={extraFields} onChange={setExtraFields} />
 
-        {error && (
-          <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-            {error}
-          </p>
-        )}
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
 
-        <div className="flex gap-3 pt-2">
-          <button
-            type="submit"
-            disabled={loading}
-            className="px-5 py-2.5 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
-          >
-            {loading ? "กำลังบันทึก..." : "สร้างงาน"}
-          </button>
-          <Link
-            href="/admin/events"
-            className="px-5 py-2.5 border border-slate-300 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors"
-          >
-            ยกเลิก
-          </Link>
-        </div>
-      </form>
+            <div className="flex flex-wrap gap-3 pt-2">
+              <Button type="submit" disabled={loading}>
+                {loading ? (
+                  <>
+                    <Loader2 className="size-4 animate-spin" />
+                    กำลังบันทึก...
+                  </>
+                ) : (
+                  "สร้างงาน"
+                )}
+              </Button>
+              <LinkButton variant="outline" href="/admin/events">
+                ยกเลิก
+              </LinkButton>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

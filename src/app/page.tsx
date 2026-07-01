@@ -1,12 +1,23 @@
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { PageContainer, PageShell } from "@/components/layout/page-container";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { LinkButton } from "@/components/ui/link-button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { CheckCircle2, Music2, Shield } from "lucide-react";
 
 async function checkSupabaseConnection() {
   if (!isSupabaseConfigured()) {
     return {
       ok: false,
       message:
-        "ยังไม่ได้ตั้งค่า env — ใส่ NEXT_PUBLIC_SUPABASE_URL และ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ใน .env.local",
+        "ยังไม่ได้ตั้งค่า env — ใส่ NEXT_PUBLIC_SUPABASE_URL และ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
     };
   }
 
@@ -34,37 +45,45 @@ export default async function Home() {
   const connection = await checkSupabaseConnection();
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
-      <div className="max-w-lg w-full bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
-        <h1 className="text-2xl font-bold text-slate-900 mb-1">
-          ระบบลงทะเบียนนักแสดงงานคอนเสิร์ต
-        </h1>
-        <p className="text-slate-500 text-sm mb-8">Yamaha Concert Registration</p>
+    <PageShell>
+      <PageContainer size="sm" className="flex min-h-screen items-center py-12">
+        <Card className="w-full shadow-sm">
+          <CardHeader className="text-center">
+            <div className="mx-auto mb-2 flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <Music2 className="size-7" />
+            </div>
+            <CardTitle className="text-xl leading-snug">
+              ระบบลงทะเบียนนักแสดงงานคอนเสิร์ต
+            </CardTitle>
+            <CardDescription>Yamaha Concert Registration</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <Alert
+              className={
+                connection.ok
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+                  : undefined
+              }
+              variant={connection.ok ? "default" : "destructive"}
+            >
+              {connection.ok && <CheckCircle2 className="text-emerald-600" />}
+              <AlertDescription className="font-medium">
+                {connection.message}
+              </AlertDescription>
+            </Alert>
 
-        <div
-          className={`rounded-lg p-4 mb-6 text-sm ${
-            connection.ok
-              ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
-              : "bg-amber-50 text-amber-800 border border-amber-200"
-          }`}
-        >
-          <span className="font-medium">
-            {connection.ok ? "✓ " : "⚠ "}
-            {connection.message}
-          </span>
-        </div>
-
-        <div className="space-y-3 text-sm text-slate-600">
-          <p className="font-medium text-slate-800">ลิงก์สำคัญ:</p>
-          <ul className="space-y-1">
-            <li>
-              <a href="/admin/login" className="text-indigo-600 hover:underline">
-                Admin Login →
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-muted-foreground">
+                เข้าใช้งาน
+              </p>
+              <LinkButton className="w-full" size="lg" href="/admin/login">
+                <Shield className="size-4" />
+                Admin Login
+              </LinkButton>
+            </div>
+          </CardContent>
+        </Card>
+      </PageContainer>
+    </PageShell>
   );
 }

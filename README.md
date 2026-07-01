@@ -41,7 +41,18 @@ npm run dev
    - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 4. Deploy
 
-## Routes
+## Seed POC Data (one-off)
+
+1. Add `SUPABASE_SERVICE_ROLE_KEY` to `.env.local`  
+   (Supabase Dashboard → Settings → API → `service_role` secret)
+2. Run:
+
+```bash
+npm run seed
+```
+
+Creates 2 events (4 & 5 ก.ค. 2026) with ~69 students each and prints test URLs.
+
 
 | Route | Description |
 |-------|-------------|

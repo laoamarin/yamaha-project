@@ -1,5 +1,8 @@
 import { logout } from "@/app/admin/actions";
 import { requireAdmin } from "@/lib/supabase/admin";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { LogOut, Music2 } from "lucide-react";
 import Link from "next/link";
 
 export default async function AdminDashboardLayout({
@@ -10,33 +13,43 @@ export default async function AdminDashboardLayout({
   const { user } = await requireAdmin();
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-white border-b border-slate-200">
-        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <Link href="/admin/events" className="font-semibold text-slate-900">
-              Yamaha Admin
+    <div className="min-h-screen bg-muted/30">
+      <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+        <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 sm:px-6">
+          <div className="flex items-center gap-4">
+            <Link
+              href="/admin/events"
+              className="flex items-center gap-2 font-semibold text-foreground"
+            >
+              <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <Music2 className="size-4" />
+              </div>
+              <span className="hidden sm:inline">Yamaha Admin</span>
             </Link>
-            <nav className="text-sm text-slate-600">
-              <Link href="/admin/events" className="hover:text-indigo-600">
+            <Separator orientation="vertical" className="hidden h-5 sm:block" />
+            <nav className="hidden text-sm text-muted-foreground sm:block">
+              <Link
+                href="/admin/events"
+                className="transition-colors hover:text-foreground"
+              >
                 งานทั้งหมด
               </Link>
             </nav>
           </div>
-          <div className="flex items-center gap-4 text-sm">
-            <span className="text-slate-500 hidden sm:inline">{user.email}</span>
+          <div className="flex items-center gap-3">
+            <span className="hidden max-w-[180px] truncate text-sm text-muted-foreground sm:inline">
+              {user.email}
+            </span>
             <form action={logout}>
-              <button
-                type="submit"
-                className="text-slate-600 hover:text-red-600 transition-colors"
-              >
-                ออกจากระบบ
-              </button>
+              <Button variant="ghost" size="sm" type="submit">
+                <LogOut className="size-4" />
+                <span className="hidden sm:inline">ออกจากระบบ</span>
+              </Button>
             </form>
           </div>
         </div>
       </header>
-      <main className="max-w-5xl mx-auto px-4 py-8">{children}</main>
+      <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">{children}</main>
     </div>
   );
 }

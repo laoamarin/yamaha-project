@@ -1,6 +1,11 @@
 "use client";
 
 import type { ExtraField } from "@/types/database";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Plus, Trash2 } from "lucide-react";
 
 type Props = {
   fields: ExtraField[];
@@ -9,10 +14,7 @@ type Props = {
 
 export function ExtraFieldsEditor({ fields, onChange }: Props) {
   function addField() {
-    onChange([
-      ...fields,
-      { key: "", label: "", required: false },
-    ]);
+    onChange([...fields, { key: "", label: "", required: false }]);
   }
 
   function updateField(index: number, patch: Partial<ExtraField>) {
@@ -24,73 +26,79 @@ export function ExtraFieldsEditor({ fields, onChange }: Props) {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4 rounded-lg border bg-muted/30 p-4">
       <div className="flex items-center justify-between">
-        <label className="block text-sm font-medium text-slate-700">
-          ช่องข้อมูลเพิ่มเติม (ตอนลงทะเบียน)
-        </label>
-        <button
-          type="button"
-          onClick={addField}
-          className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
-        >
-          + เพิ่มช่อง
-        </button>
+        <div>
+          <Label className="text-sm font-medium">ช่องข้อมูลเพิ่มเติม</Label>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            แสดงตอนผู้ปกครองลงทะเบียน
+          </p>
+        </div>
+        <Button type="button" variant="outline" size="sm" onClick={addField}>
+          <Plus className="size-3.5" />
+          เพิ่มช่อง
+        </Button>
       </div>
 
       {fields.length === 0 && (
-        <p className="text-sm text-slate-400 italic">
-          ยังไม่มีช่องเพิ่มเติม — กด &quot;เพิ่มช่อง&quot; ถ้าต้องการ เช่น เบอร์โทร, ชื่อผู้ปกครอง
+        <p className="text-sm text-muted-foreground italic">
+          ยังไม่มีช่องเพิ่มเติม — เช่น เบอร์โทร, ชื่อผู้ปกครอง
         </p>
       )}
 
-      {fields.map((field, index) => (
-        <div
-          key={index}
-          className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto_auto] gap-2 items-end p-3 bg-slate-50 rounded-lg border border-slate-200"
-        >
-          <div>
-            <label className="block text-xs text-slate-500 mb-1">Key (ภาษาอังกฤษ)</label>
-            <input
-              type="text"
-              value={field.key}
-              onChange={(e) =>
-                updateField(index, {
-                  key: e.target.value.replace(/\s/g, "_").toLowerCase(),
-                })
-              }
-              placeholder="phone"
-              className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-          </div>
-          <div>
-            <label className="block text-xs text-slate-500 mb-1">Label (แสดงผล)</label>
-            <input
-              type="text"
-              value={field.label}
-              onChange={(e) => updateField(index, { label: e.target.value })}
-              placeholder="เบอร์โทร"
-              className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-          </div>
-          <label className="flex items-center gap-2 text-sm text-slate-600 pb-2">
-            <input
-              type="checkbox"
-              checked={field.required}
-              onChange={(e) => updateField(index, { required: e.target.checked })}
-              className="rounded border-slate-300"
-            />
-            บังคับ
-          </label>
-          <button
-            type="button"
-            onClick={() => removeField(index)}
-            className="text-sm text-red-500 hover:text-red-700 pb-2"
+      <div className="space-y-3">
+        {fields.map((field, index) => (
+          <div
+            key={index}
+            className="grid grid-cols-1 gap-3 rounded-lg border bg-background p-3 sm:grid-cols-[1fr_1fr_auto_auto] sm:items-end"
           >
-            ลบ
-          </button>
-        </div>
-      ))}
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Key</Label>
+              <Input
+                value={field.key}
+                onChange={(e) =>
+                  updateField(index, {
+                    key: e.target.value.replace(/\s/g, "_").toLowerCase(),
+                  })
+                }
+                placeholder="phone"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Label</Label>
+              <Input
+                value={field.label}
+                onChange={(e) => updateField(index, { label: e.target.value })}
+                placeholder="เบอร์โทร"
+              />
+            </div>
+            <div className="flex items-center gap-2 pb-1">
+              <Checkbox
+                id={`required-${index}`}
+                checked={field.required}
+                onCheckedChange={(checked) =>
+                  updateField(index, { required: checked === true })
+                }
+              />
+              <Label
+                htmlFor={`required-${index}`}
+                className="text-sm font-normal cursor-pointer"
+              >
+                บังคับ
+              </Label>
+            </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="text-destructive hover:text-destructive"
+              onClick={() => removeField(index)}
+            >
+              <Trash2 className="size-4" />
+            </Button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
