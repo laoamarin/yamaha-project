@@ -1,5 +1,7 @@
 "use client";
 
+import { CertificatePreviewButton, CertificateSettingsPanel } from "@/components/admin/CertificateSettings";
+import { ResetRegistrationButton } from "@/components/admin/ResetRegistrationButton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -70,6 +72,24 @@ export function RegistrationDashboard({
           setRegisteredCount((c) => c + 1);
         }
       )
+      .on(
+        "postgres_changes",
+        {
+          event: "DELETE",
+          schema: "public",
+          table: "registrations",
+          filter: `event_id=eq.${event.id}`,
+        },
+        (payload) => {
+          const reg = payload.old as Registration;
+          setRows((prev) =>
+            prev.map((r) =>
+              r.id === reg.student_id ? { ...r, registration: null } : r
+            )
+          );
+          setRegisteredCount((c) => Math.max(0, c - 1));
+        }
+      )
       .subscribe();
 
     return () => {
@@ -136,6 +156,8 @@ export function RegistrationDashboard({
 
   return (
     <div className="space-y-5">
+      <CertificateSettingsPanel event={event} />
+
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3">
         <Card>
@@ -213,12 +235,14 @@ export function RegistrationDashboard({
                   <TableHead className="hidden sm:table-cell">ครู</TableHead>
                   <TableHead>สถานะ</TableHead>
                   <TableHead className="hidden md:table-cell">เวลา</TableHead>
+                  <TableHead className="w-12 text-center">เกียรติบัตร</TableHead>
+                  <TableHead className="w-12 text-center">รีเซ็ต</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {paginated.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="py-10 text-center text-muted-foreground">
+                    <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
                       ไม่พบรายชื่อ
                     </TableCell>
                   </TableRow>
@@ -254,6 +278,28 @@ export function RegistrationDashboard({
                         {row.registration
                           ? formatDateTime(row.registration.registered_at)
                           : "—"}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <CertificatePreviewButton
+                          event={event}
+                          studentName={row.full_name}
+                          registered={Boolean(row.registration)}
+                        />
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <ResetRegistrationButton
+                          eventId={event.id}
+                          student={row}
+                          registered={Boolean(row.registration)}
+                          onReset={() => {
+                            setRows((prev) =>
+                              prev.map((r) =>
+                                r.id === row.id ? { ...r, registration: null } : r
+                              )
+                            );
+                            setRegisteredCount((c) => Math.max(0, c - 1));
+                          }}
+                        />
                       </TableCell>
                     </TableRow>
                   ))

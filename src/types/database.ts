@@ -5,6 +5,7 @@ export type ExtraField = {
 };
 
 export type CertificateConfig = {
+  enabled?: boolean;
   x_pct: number;
   y_pct: number;
   font_size: number;

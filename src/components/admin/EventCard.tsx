@@ -12,7 +12,9 @@ import {
   ExternalLink,
   LayoutDashboard,
   Music2,
+  Pencil,
   Upload,
+  Award,
 } from "lucide-react";
 
 type Props = {
@@ -38,6 +40,15 @@ export function EventCard({ event, studentCount, registeredCount }: Props) {
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        <LinkButton
+          variant="secondary"
+          size="sm"
+          href={`/admin/events/${event.id}/edit`}
+          className="absolute right-3 top-3 bg-white/90 text-slate-800 hover:bg-white"
+        >
+          <Pencil className="size-3.5" />
+          แก้ไข
+        </LinkButton>
         <div className="absolute bottom-0 left-0 right-0 p-4">
           <h2 className="font-semibold text-white leading-snug">{event.name}</h2>
           <p className="mt-1 flex items-center gap-1 text-xs text-white/80">
@@ -111,6 +122,17 @@ export function EventCard({ event, studentCount, registeredCount }: Props) {
               <span className="flex items-center gap-2">
                 <Upload className="size-4" />
                 นำเข้ารายชื่อ Excel
+              </span>
+              <ChevronRight className="size-4 text-muted-foreground" />
+            </LinkButton>
+            <LinkButton
+              variant="outline"
+              className="h-11 w-full justify-between"
+              href={`/admin/events/${event.id}/certificate`}
+            >
+              <span className="flex items-center gap-2">
+                <Award className="size-4" />
+                ตั้งค่าเกียรติบัตร
               </span>
               <ChevronRight className="size-4 text-muted-foreground" />
             </LinkButton>

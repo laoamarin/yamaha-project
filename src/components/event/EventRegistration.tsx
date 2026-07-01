@@ -10,16 +10,8 @@ import {
 import { PublicBody, PublicHeader, PublicShell } from "@/components/layout/public-shell";
 import { formatEventDate } from "@/lib/format";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
 import { LinkButton } from "@/components/ui/link-button";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -39,7 +31,6 @@ import {
   CheckCircle2,
   Loader2,
   Search,
-  User,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -203,210 +194,193 @@ export function EventRegistration({ event }: Props) {
         coverUrl={event.cover_image_url}
       />
       <PublicBody>
-        {!selected && (
-          <Card className="mb-4 shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">ค้นหาชื่อนักเรียน</CardTitle>
-              <CardDescription>
-                พิมพ์ชื่อ นามสกุล หรือชื่อเล่น
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+        {!selected ? (
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="search" className="text-sm font-medium">
+                ค้นหาชื่อนักเรียน
+              </Label>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
+                  id="search"
                   type="search"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="เช่น ณธัช, เคธี่, มิสา..."
+                  placeholder="พิมพ์ชื่อ นามสกุล หรือชื่อเล่น"
                   autoFocus
-                  className="pl-9 h-11"
+                  className="h-11 pl-9"
                 />
               </div>
               {searching && (
-                <p className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                <p className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Loader2 className="size-3 animate-spin" />
                   กำลังค้นหา...
                 </p>
               )}
-            </CardContent>
-          </Card>
-        )}
+            </div>
 
-        {/* Search results */}
-        {!selected && results.length > 0 && (
-          <div className="space-y-2">
-            {results.map((student) => (
-              <Card
-                key={student.id}
-                className="cursor-pointer shadow-sm transition-colors hover:border-primary/30 hover:bg-accent/50"
-                onClick={() => loadStudent(student)}
-              >
-                <CardContent className="flex items-start gap-3 p-4">
-                  <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                    <User className="size-4" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium leading-snug">
-                      {formatStudentName(student)}
-                    </p>
-                    <div className="mt-1 flex flex-wrap gap-2">
-                      {student.instrument && (
-                        <Badge variant="outline" className="text-xs font-normal">
-                          {student.instrument}
-                        </Badge>
-                      )}
-                      {student.teacher_name && (
+            {results.length > 0 && (
+              <ul className="divide-y divide-slate-200 overflow-hidden rounded-lg border border-slate-200 bg-white">
+                {results.map((student) => (
+                  <li key={student.id}>
+                    <button
+                      type="button"
+                      onClick={() => loadStudent(student)}
+                      className="flex w-full flex-col gap-0.5 px-4 py-3 text-left transition-colors hover:bg-slate-50"
+                    >
+                      <span className="font-medium text-slate-900">
+                        {formatStudentName(student)}
+                      </span>
+                      {(student.instrument || student.teacher_name) && (
                         <span className="text-xs text-muted-foreground">
-                          ครู {student.teacher_name}
+                          {[student.instrument, student.teacher_name && `ครู ${student.teacher_name}`]
+                            .filter(Boolean)
+                            .join(" · ")}
                         </span>
                       )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {debouncedQuery && !searching && results.length === 0 && (
+              <p className="rounded-lg border border-dashed border-slate-200 py-8 text-center text-sm text-muted-foreground">
+                ไม่พบชื่อ &quot;{debouncedQuery}&quot;
+              </p>
+            )}
+
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
           </div>
-        )}
+        ) : (
+          <div className="space-y-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="-ml-2 h-8 px-2 text-muted-foreground"
+              onClick={handleClearSelection}
+            >
+              <ArrowLeft className="size-4" />
+              ค้นหาใหม่
+            </Button>
 
-        {!selected && debouncedQuery && !searching && results.length === 0 && (
-          <Card className="shadow-sm">
-            <CardContent className="py-10 text-center text-sm text-muted-foreground">
-              ไม่พบชื่อ &quot;{debouncedQuery}&quot;
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Selected student */}
-        {selected && (
-          <Card className="shadow-sm">
-            <CardHeader className="pb-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="-ml-2 mb-1 w-fit text-muted-foreground"
-                onClick={handleClearSelection}
-              >
-                <ArrowLeft className="size-4" />
-                ค้นหาใหม่
-              </Button>
-              <CardTitle className="text-lg leading-snug">
+            <div>
+              <h2 className="text-lg font-semibold leading-snug text-slate-900">
                 {formatStudentName(selected)}
-              </CardTitle>
+              </h2>
               {selected.teacher_name && (
-                <CardDescription>ครูผู้สอน: {selected.teacher_name}</CardDescription>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  ครูผู้สอน: {selected.teacher_name}
+                </p>
               )}
-            </CardHeader>
+            </div>
 
-            <CardContent className="space-y-4">
-              {loadingStudent && (
-                <div className="space-y-3">
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-20 w-full" />
-                </div>
-              )}
+            {loadingStudent && (
+              <div className="space-y-3">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-20 w-full" />
+              </div>
+            )}
 
-              {!loadingStudent && registration && (
-                <>
-                  <Alert className="border-emerald-200 bg-emerald-50 text-emerald-900 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-100">
-                    <CheckCircle2 className="text-emerald-600" />
-                    <AlertDescription>
-                      <p className="font-medium">ลงทะเบียนแล้ว</p>
-                      <p className="mt-1 text-sm opacity-80">
-                        เมื่อ {formatDateTime(registration.registered_at)}
-                      </p>
-                      {Object.keys(registration.extra_data).length > 0 && (
-                        <dl className="mt-3 space-y-1.5 text-sm">
-                          {(event.extra_fields as ExtraField[]).map((field) =>
-                            registration.extra_data[field.key] ? (
-                              <div key={field.key} className="flex gap-2">
-                                <dt className="opacity-70">{field.label}:</dt>
-                                <dd className="font-medium">
-                                  {registration.extra_data[field.key]}
-                                </dd>
-                              </div>
-                            ) : null
-                          )}
-                        </dl>
-                      )}
-                    </AlertDescription>
-                  </Alert>
-
-                  {event.certificates_released && (
-                    <LinkButton
-                      className="w-full"
-                      size="lg"
-                      href={`/event/${event.qr_token}/certificate/${selected.id}`}
-                    >
-                      <Award className="size-4" />
-                      ดูเกียรติบัตร
-                    </LinkButton>
-                  )}
-                </>
-              )}
-
-              {!loadingStudent && !registration && (
-                <form onSubmit={handleRegister} className="space-y-4">
-                  <Separator />
-                  <p className="text-sm text-muted-foreground">
-                    กรุณากรอกข้อมูลเพื่อยืนยันการลงทะเบียน
-                  </p>
-
-                  {(event.extra_fields as ExtraField[]).map((field) => (
-                    <div key={field.key} className="space-y-2">
-                      <Label htmlFor={field.key}>
-                        {field.label}
-                        {field.required && (
-                          <span className="ml-0.5 text-destructive">*</span>
+            {!loadingStudent && registration && (
+              <div className="space-y-4">
+                <Alert className="border-emerald-200 bg-emerald-50 text-emerald-900">
+                  <CheckCircle2 className="text-emerald-600" />
+                  <AlertDescription>
+                    <p className="font-medium">ลงทะเบียนแล้ว</p>
+                    <p className="mt-1 text-sm opacity-80">
+                      เมื่อ {formatDateTime(registration.registered_at)}
+                    </p>
+                    {Object.keys(registration.extra_data).length > 0 && (
+                      <dl className="mt-3 space-y-1.5 text-sm">
+                        {(event.extra_fields as ExtraField[]).map((field) =>
+                          registration.extra_data[field.key] ? (
+                            <div key={field.key} className="flex gap-2">
+                              <dt className="opacity-70">{field.label}:</dt>
+                              <dd className="font-medium">
+                                {registration.extra_data[field.key]}
+                              </dd>
+                            </div>
+                          ) : null
                         )}
-                      </Label>
-                      <Input
-                        id={field.key}
-                        type={field.key === "phone" ? "tel" : "text"}
-                        value={extraData[field.key] ?? ""}
-                        onChange={(e) =>
-                          setExtraData((prev) => ({
-                            ...prev,
-                            [field.key]: e.target.value,
-                          }))
-                        }
-                        required={field.required}
-                        className="h-11"
-                      />
-                    </div>
-                  ))}
+                      </dl>
+                    )}
+                  </AlertDescription>
+                </Alert>
 
-                  {error && (
-                    <Alert variant="destructive">
-                      <AlertDescription>{error}</AlertDescription>
-                    </Alert>
-                  )}
-
-                  <Button
-                    type="submit"
-                    disabled={submitting}
+                {event.certificates_released && (
+                  <LinkButton
                     className="w-full"
                     size="lg"
+                    href={`/event/${event.qr_token}/certificate/${selected.id}`}
                   >
-                    {submitting ? (
-                      <>
-                        <Loader2 className="size-4 animate-spin" />
-                        กำลังบันทึก...
-                      </>
-                    ) : (
-                      "ยืนยันลงทะเบียน"
-                    )}
-                  </Button>
-                </form>
-              )}
-            </CardContent>
-          </Card>
-        )}
+                    <Award className="size-4" />
+                    ดูเกียรติบัตร
+                  </LinkButton>
+                )}
+              </div>
+            )}
 
-        {error && !selected && (
-          <Alert variant="destructive" className="mt-4">
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
+            {!loadingStudent && !registration && (
+              <form onSubmit={handleRegister} className="space-y-4">
+                <Separator />
+                <p className="text-sm text-muted-foreground">
+                  กรุณากรอกข้อมูลเพื่อยืนยันการลงทะเบียน
+                </p>
+
+                {(event.extra_fields as ExtraField[]).map((field) => (
+                  <div key={field.key} className="space-y-2">
+                    <Label htmlFor={field.key}>
+                      {field.label}
+                      {field.required && (
+                        <span className="ml-0.5 text-destructive">*</span>
+                      )}
+                    </Label>
+                    <Input
+                      id={field.key}
+                      type={field.key === "phone" ? "tel" : "text"}
+                      value={extraData[field.key] ?? ""}
+                      onChange={(e) =>
+                        setExtraData((prev) => ({
+                          ...prev,
+                          [field.key]: e.target.value,
+                        }))
+                      }
+                      required={field.required}
+                      className="h-11"
+                    />
+                  </div>
+                ))}
+
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+
+                <Button
+                  type="submit"
+                  disabled={submitting}
+                  className="h-11 w-full"
+                  size="lg"
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 className="size-4 animate-spin" />
+                      กำลังบันทึก...
+                    </>
+                  ) : (
+                    "ยืนยันลงทะเบียน"
+                  )}
+                </Button>
+              </form>
+            )}
+          </div>
         )}
       </PublicBody>
 

@@ -1,30 +1,30 @@
--- Storage bucket for certificate templates
--- Run after schema.sql in Supabase SQL Editor
+-- Certificate template storage (run in Supabase SQL Editor)
+-- Fixes: "new row violates row-level security policy" on upload
 
 insert into storage.buckets (id, name, public)
 values ('certificate-templates', 'certificate-templates', true)
 on conflict (id) do nothing;
 
--- Public read for certificate template images
+-- Drop old policies if re-running
 drop policy if exists "public read certificate templates" on storage.objects;
+drop policy if exists "admin upload certificate templates" on storage.objects;
+drop policy if exists "admin update certificate templates" on storage.objects;
+drop policy if exists "admin delete certificate templates" on storage.objects;
+
 create policy "public read certificate templates"
   on storage.objects for select
   using (bucket_id = 'certificate-templates');
 
--- Admin upload (authenticated users)
-drop policy if exists "admin upload certificate templates" on storage.objects;
 create policy "admin upload certificate templates"
   on storage.objects for insert
   to authenticated
   with check (bucket_id = 'certificate-templates');
 
-drop policy if exists "admin update certificate templates" on storage.objects;
 create policy "admin update certificate templates"
   on storage.objects for update
   to authenticated
   using (bucket_id = 'certificate-templates');
 
-drop policy if exists "admin delete certificate templates" on storage.objects;
 create policy "admin delete certificate templates"
   on storage.objects for delete
   to authenticated

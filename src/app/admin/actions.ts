@@ -1,9 +1,29 @@
 "use server";
 
+import { DEFAULT_CERTIFICATE_CONFIG } from "@/lib/certificate-utils";
 import { createClient } from "@/lib/supabase/server";
-import type { ExtraField } from "@/types/database";
+import { createServiceClient } from "@/lib/supabase/service";
+import type { CertificateConfig, Event, ExtraField } from "@/types/database";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+
+async function updateEventRecord(eventId: string, update: Partial<Event>) {
+  const service = createServiceClient();
+  const { data, error } = await service
+    .from("events")
+    .update(update)
+    .eq("id", eventId)
+    .select("id")
+    .maybeSingle();
+
+  if (error) {
+    return { error: error.message };
+  }
+  if (!data) {
+    return { error: "บันทึกไม่สำเร็จ — ไม่พบงานนี้" };
+  }
+  return { success: true as const };
+}
 
 export async function logout() {
   const supabase = createClient();
@@ -131,4 +151,232 @@ export async function importStudents(
   revalidatePath(`/admin/events/${eventId}/import`);
   revalidatePath("/admin/events");
   return { success: true, inserted };
+}
+
+export async function updateEvent(eventId: string, formData: FormData) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/admin/login");
+  }
+
+  const name = (formData.get("name") as string)?.trim();
+  const event_date = formData.get("event_date") as string;
+  const coverFile = formData.get("cover_image") as File | null;
+  const extra_fields = JSON.parse(
+    (formData.get("extra_fields") as string) || "[]"
+  ) as ExtraField[];
+  const is_active = formData.get("is_active") === "true";
+
+  if (!name || !event_date) {
+    return { error: "กรุณากรอกชื่องานและวันที่" };
+  }
+
+  for (const field of extra_fields) {
+    if (!field.key?.trim() || !field.label?.trim()) {
+      return { error: "ช่องเพิ่มเติมต้องมี key และ label" };
+    }
+  }
+
+  const update: Partial<Event> = {
+    name,
+    event_date,
+    extra_fields,
+    is_active,
+  };
+
+  if (coverFile && coverFile.size > 0) {
+    const ext = coverFile.name.split(".").pop()?.toLowerCase() || "jpg";
+    const path = `${eventId}/${crypto.randomUUID()}.${ext}`;
+    const { error: uploadError } = await supabase.storage
+      .from("event-covers")
+      .upload(path, coverFile, { contentType: coverFile.type });
+
+    if (uploadError) {
+      return { error: `อัปโหลดรูปไม่สำเร็จ: ${uploadError.message}` };
+    }
+
+    const { data: urlData } = supabase.storage
+      .from("event-covers")
+      .getPublicUrl(path);
+    update.cover_image_url = urlData.publicUrl;
+  }
+
+  const writeResult = await updateEventRecord(eventId, update);
+  if (writeResult.error) {
+    return { error: writeResult.error };
+  }
+
+  revalidatePath("/admin/events");
+  revalidatePath(`/admin/events/${eventId}/edit`);
+  revalidatePath(`/admin/events/${eventId}/dashboard`);
+  redirect("/admin/events");
+}
+
+export async function saveCertificateSettings(
+  eventId: string,
+  data: {
+    config: CertificateConfig;
+    certificates_released: boolean;
+    templateBase64?: string;
+    templateContentType?: string;
+    templateFileName?: string;
+  }
+) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "กรุณาเข้าสู่ระบบ" };
+  }
+
+  const { data: existing, error: fetchError } = await supabase
+    .from("events")
+    .select("certificate_template_url")
+    .eq("id", eventId)
+    .maybeSingle();
+
+  if (fetchError || !existing) {
+    return { error: "ไม่พบงานนี้" };
+  }
+
+  let templateUrl = existing.certificate_template_url ?? undefined;
+
+  if (data.templateBase64) {
+    try {
+      const service = createServiceClient();
+      const ext =
+        data.templateFileName?.split(".").pop()?.toLowerCase() || "jpg";
+      const path = `${eventId}/${crypto.randomUUID()}.${ext}`;
+      const buffer = Buffer.from(data.templateBase64, "base64");
+
+      const { error: uploadError } = await service.storage
+        .from("certificate-templates")
+        .upload(path, buffer, {
+          contentType: data.templateContentType || "image/jpeg",
+          upsert: false,
+        });
+
+      if (uploadError) {
+        return {
+          error: `อัปโหลดรูปไม่สำเร็จ: ${uploadError.message}`,
+        };
+      }
+
+      const { data: urlData } = service.storage
+        .from("certificate-templates")
+        .getPublicUrl(path);
+      templateUrl = urlData.publicUrl;
+    } catch (e) {
+      const message =
+        e instanceof Error ? e.message : "อัปโหลดรูปไม่สำเร็จ";
+      if (message.includes("SUPABASE_SERVICE_ROLE_KEY")) {
+        return {
+          error:
+            "ไม่พบ SUPABASE_SERVICE_ROLE_KEY ใน .env.local — ดู README หรือรัน supabase/certificate-storage.sql",
+        };
+      }
+      return { error: message };
+    }
+  }
+
+  if (!templateUrl) {
+    return { error: "กรุณาอัปโหลดรูป template ก่อนบันทึก" };
+  }
+
+  const update: Partial<Event> = {
+    certificate_config: data.config,
+    certificates_released: data.certificates_released,
+    certificate_template_url: templateUrl,
+  };
+
+  const writeResult = await updateEventRecord(eventId, update);
+  if (writeResult.error) {
+    return { error: writeResult.error };
+  }
+
+  revalidatePath(`/admin/events/${eventId}/certificate`);
+  revalidatePath(`/admin/events/${eventId}/dashboard`);
+  revalidatePath("/admin/events");
+  return { success: true, templateUrl };
+}
+
+export async function toggleCertificateEnabled(
+  eventId: string,
+  enabled: boolean
+) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "กรุณาเข้าสู่ระบบ" };
+  }
+
+  const { data: event, error: fetchError } = await supabase
+    .from("events")
+    .select("certificate_config, certificate_template_url")
+    .eq("id", eventId)
+    .maybeSingle();
+
+  if (fetchError || !event) {
+    return { error: "ไม่พบงานนี้" };
+  }
+
+  if (!event.certificate_template_url) {
+    return { error: "กรุณาอัปโหลด template ก่อน" };
+  }
+
+  const config: CertificateConfig = {
+    ...DEFAULT_CERTIFICATE_CONFIG,
+    ...(event.certificate_config as CertificateConfig | null),
+    enabled,
+  };
+
+  const writeResult = await updateEventRecord(eventId, {
+    certificate_config: config,
+  });
+  if (writeResult.error) {
+    return { error: writeResult.error };
+  }
+
+  revalidatePath(`/admin/events/${eventId}/dashboard`);
+  revalidatePath(`/admin/events/${eventId}/certificate`);
+  return { success: true };
+}
+
+export async function resetRegistration(eventId: string, studentId: string) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "กรุณาเข้าสู่ระบบ" };
+  }
+
+  const service = createServiceClient();
+  const { data, error } = await service
+    .from("registrations")
+    .delete()
+    .eq("event_id", eventId)
+    .eq("student_id", studentId)
+    .select("id")
+    .maybeSingle();
+
+  if (error) {
+    return { error: error.message };
+  }
+  if (!data) {
+    return { error: "ไม่พบการลงทะเบียน — อาจถูกรีเซ็ตไปแล้ว" };
+  }
+
+  revalidatePath(`/admin/events/${eventId}/dashboard`);
+  return { success: true };
 }

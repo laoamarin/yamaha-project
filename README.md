@@ -14,7 +14,8 @@
 ```bash
 npm install
 cp .env.local.example .env.local
-# ใส่ NEXT_PUBLIC_SUPABASE_URL และ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+# ใส่ NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+# และ SUPABASE_SERVICE_ROLE_KEY (ใช้อัปโหลด template เกียรติบัตร + seed)
 npm run dev
 ```
 
@@ -27,6 +28,8 @@ npm run dev
 1. `supabase/schema.sql`
 2. `supabase/storage.sql`
 3. `supabase/admin-policies.sql`
+4. `supabase/certificate-storage.sql` (ถ้าอัปโหลดเกียรติบัตรแล้วขึ้น RLS 403)
+5. `supabase/event-covers.sql` (ถ้ายังไม่มีคอลัมน์ cover)
 
 สร้าง admin user ที่ **Authentication → Users → Add user**
 
