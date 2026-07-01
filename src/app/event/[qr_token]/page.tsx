@@ -1,7 +1,21 @@
-import { EventRegistration } from "@/components/event/EventRegistration";
+import dynamic from "next/dynamic";
 import { createClient } from "@/lib/supabase/server";
 import type { Event } from "@/types/database";
 import { notFound } from "next/navigation";
+
+const EventRegistration = dynamic(
+  () =>
+    import("@/components/event/EventRegistration").then(
+      (m) => m.EventRegistration
+    ),
+  {
+    loading: () => (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <p className="text-sm text-muted-foreground">กำลังโหลด...</p>
+      </div>
+    ),
+  }
+);
 
 type Props = {
   params: { qr_token: string };
