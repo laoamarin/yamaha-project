@@ -50,6 +50,82 @@ export async function fileToBase64(file: File): Promise<string> {
   return btoa(binary);
 }
 
+const templateCache = new Map<string, HTMLImageElement>();
+
+export async function loadCertificateTemplate(
+  templateUrl: string
+): Promise<HTMLImageElement> {
+  const cached = templateCache.get(templateUrl);
+  if (cached) return cached;
+
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  await new Promise<void>((resolve, reject) => {
+    img.onload = () => resolve();
+    img.onerror = () => reject(new Error("โหลดรูป template ไม่สำเร็จ"));
+    img.src = templateUrl;
+  });
+  templateCache.set(templateUrl, img);
+  return img;
+}
+
+export async function renderCertificateToCanvas(
+  templateUrl: string,
+  config: CertificateConfig,
+  studentName: string,
+  templateImg?: HTMLImageElement
+): Promise<HTMLCanvasElement> {
+  await loadCertificateFont(config.font_family);
+  const img = templateImg ?? (await loadCertificateTemplate(templateUrl));
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("ไม่สามารถสร้าง canvas ได้");
+  drawCertificate(ctx, img, config, studentName);
+  return canvas;
+}
+
+export function eventHasCertificate(event: {
+  certificate_template_url: string | null;
+  certificate_config: CertificateConfig | null;
+}): boolean {
+  return (
+    Boolean(event.certificate_template_url) &&
+    Boolean(
+      event.certificate_config?.enabled ?? event.certificate_template_url
+    )
+  );
+}
+
+export async function exportCertificatesPdf(
+  items: { canvas: HTMLCanvasElement; name: string }[],
+  filename: string
+) {
+  if (!items.length) return;
+
+  const { jsPDF } = await import("jspdf");
+  const first = items[0].canvas;
+  const pageW = first.width;
+  const pageH = first.height;
+  const orientation = pageW > pageH ? "landscape" : "portrait";
+
+  const pdf = new jsPDF({
+    orientation,
+    unit: "px",
+    format: [pageW, pageH],
+    compress: true,
+  });
+
+  for (let i = 0; i < items.length; i++) {
+    if (i > 0) {
+      pdf.addPage([pageW, pageH], orientation);
+    }
+    const imgData = items[i].canvas.toDataURL("image/jpeg", 0.92);
+    pdf.addImage(imgData, "JPEG", 0, 0, pageW, pageH);
+  }
+
+  pdf.save(filename);
+}
+
 export function drawCertificate(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement,

@@ -62,3 +62,23 @@
     @apply bg-background text-foreground;
   }
 }
+
+@media print {
+  @page {
+    margin: 0;
+  }
+
+  body {
+    background: white !important;
+  }
+
+  .cert-sheet {
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .cert-sheet:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+}

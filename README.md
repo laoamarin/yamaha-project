@@ -21,6 +21,8 @@ npm run dev
 
 เปิด [http://localhost:3000](http://localhost:3000)
 
+**Dev tips:** ใช้ `npm run dev` (รันผ่าน Node โดยตรง) อย่ารัน `rm -rf .next && dev` ทุกครั้ง — จะช้าและทำให้ cache พังได้ ถ้าเจอ error `vendor-chunks` ให้หยุด server แล้วรัน `npm run dev:reset` ครั้งเดียว
+
 ## Supabase Setup
 
 รัน SQL ตามลำดับใน Supabase SQL Editor:
