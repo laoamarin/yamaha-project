@@ -18,6 +18,7 @@ export type Event = {
   name: string;
   event_date: string;
   qr_token: string;
+  cover_image_url: string | null;
   extra_fields: ExtraField[];
   certificate_template_url: string | null;
   certificate_config: CertificateConfig | null;

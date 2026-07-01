@@ -1,7 +1,10 @@
 import { logout } from "@/app/admin/actions";
 import { requireAdmin } from "@/lib/supabase/admin";
+import {
+  AdminBody,
+  AdminShell,
+} from "@/components/layout/admin-shell";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { LogOut, Music2 } from "lucide-react";
 import Link from "next/link";
 
@@ -13,43 +16,31 @@ export default async function AdminDashboardLayout({
   const { user } = await requireAdmin();
 
   return (
-    <div className="min-h-screen bg-muted/30">
-      <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-        <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 sm:px-6">
-          <div className="flex items-center gap-4">
-            <Link
-              href="/admin/events"
-              className="flex items-center gap-2 font-semibold text-foreground"
+    <AdminShell>
+      <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b bg-slate-900 px-4 text-white sm:px-6">
+        <Link href="/admin/events" className="flex items-center gap-2.5 font-semibold">
+          <div className="flex size-8 items-center justify-center rounded-lg bg-white/10">
+            <Music2 className="size-4" />
+          </div>
+          <span className="text-sm">Yamaha Admin</span>
+        </Link>
+        <div className="flex items-center gap-2">
+          <span className="hidden max-w-[140px] truncate text-xs text-slate-400 sm:inline">
+            {user.email}
+          </span>
+          <form action={logout}>
+            <Button
+              variant="ghost"
+              size="sm"
+              type="submit"
+              className="text-slate-300 hover:bg-white/10 hover:text-white"
             >
-              <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <Music2 className="size-4" />
-              </div>
-              <span className="hidden sm:inline">Yamaha Admin</span>
-            </Link>
-            <Separator orientation="vertical" className="hidden h-5 sm:block" />
-            <nav className="hidden text-sm text-muted-foreground sm:block">
-              <Link
-                href="/admin/events"
-                className="transition-colors hover:text-foreground"
-              >
-                งานทั้งหมด
-              </Link>
-            </nav>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="hidden max-w-[180px] truncate text-sm text-muted-foreground sm:inline">
-              {user.email}
-            </span>
-            <form action={logout}>
-              <Button variant="ghost" size="sm" type="submit">
-                <LogOut className="size-4" />
-                <span className="hidden sm:inline">ออกจากระบบ</span>
-              </Button>
-            </form>
-          </div>
+              <LogOut className="size-4" />
+            </Button>
+          </form>
         </div>
       </header>
-      <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">{children}</main>
-    </div>
+      <AdminBody>{children}</AdminBody>
+    </AdminShell>
   );
 }

@@ -10,6 +10,7 @@ create table events (
   name text not null,
   event_date date not null,
   qr_token text unique not null default gen_random_uuid()::text,
+  cover_image_url text,
   extra_fields jsonb default '[]',
   -- e.g. [{"key":"phone","label":"เบอร์โทร","required":true},{"key":"registered_by","label":"ชื่อผู้ปกครอง","required":true}]
   certificate_template_url text,

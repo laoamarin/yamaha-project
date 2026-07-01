@@ -23,6 +23,7 @@ export async function createEvent(formData: FormData) {
 
   const name = (formData.get("name") as string)?.trim();
   const event_date = formData.get("event_date") as string;
+  const coverFile = formData.get("cover_image") as File | null;
   const extra_fields = JSON.parse(
     (formData.get("extra_fields") as string) || "[]"
   ) as ExtraField[];
@@ -37,10 +38,30 @@ export async function createEvent(formData: FormData) {
     }
   }
 
+  let cover_image_url: string | null = null;
+
+  if (coverFile && coverFile.size > 0) {
+    const ext = coverFile.name.split(".").pop()?.toLowerCase() || "jpg";
+    const path = `${crypto.randomUUID()}.${ext}`;
+    const { error: uploadError } = await supabase.storage
+      .from("event-covers")
+      .upload(path, coverFile, { contentType: coverFile.type });
+
+    if (uploadError) {
+      return { error: `อัปโหลดรูปไม่สำเร็จ: ${uploadError.message}` };
+    }
+
+    const { data: urlData } = supabase.storage
+      .from("event-covers")
+      .getPublicUrl(path);
+    cover_image_url = urlData.publicUrl;
+  }
+
   const { error } = await supabase.from("events").insert({
     name,
     event_date,
     extra_fields,
+    cover_image_url,
     certificates_released: false,
     is_active: true,
     certificate_template_url: null,

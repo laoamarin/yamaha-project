@@ -7,7 +7,8 @@ import {
   lastStudentStorageKey,
   normalizeSearchQuery,
 } from "@/lib/event-utils";
-import { PageContainer, PageShell } from "@/components/layout/page-container";
+import { PublicBody, PublicHeader, PublicShell } from "@/components/layout/public-shell";
+import { formatEventDate } from "@/lib/format";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { LinkButton } from "@/components/ui/link-button";
@@ -35,7 +36,6 @@ import type { Event, ExtraField, Registration, Student } from "@/types/database"
 import {
   ArrowLeft,
   Award,
-  Calendar,
   CheckCircle2,
   Loader2,
   Search,
@@ -193,29 +193,16 @@ export function EventRegistration({ event }: Props) {
     setShowSuccess(false);
   }
 
-  const eventDate = new Date(event.event_date + "T00:00:00").toLocaleDateString(
-    "th-TH",
-    { year: "numeric", month: "long", day: "numeric" }
-  );
+  const eventDate = formatEventDate(event.event_date);
 
   return (
-    <PageShell>
-      <PageContainer size="sm" className="py-10">
-        {/* Header */}
-        <div className="mb-8 text-center">
-          <Badge variant="secondary" className="mb-3">
-            ลงทะเบียนนักแสดง
-          </Badge>
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-            {event.name}
-          </h1>
-          <p className="mt-2 flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
-            <Calendar className="size-4" />
-            {eventDate}
-          </p>
-        </div>
-
-        {/* Search */}
+    <PublicShell>
+      <PublicHeader
+        eventName={event.name}
+        eventDate={eventDate}
+        coverUrl={event.cover_image_url}
+      />
+      <PublicBody>
         {!selected && (
           <Card className="mb-4 shadow-sm">
             <CardHeader className="pb-3">
@@ -421,7 +408,7 @@ export function EventRegistration({ event }: Props) {
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
-      </PageContainer>
+      </PublicBody>
 
       <Dialog open={showSuccess} onOpenChange={setShowSuccess}>
         <DialogContent className="sm:max-w-sm">
@@ -441,6 +428,6 @@ export function EventRegistration({ event }: Props) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </PageShell>
+    </PublicShell>
   );
 }

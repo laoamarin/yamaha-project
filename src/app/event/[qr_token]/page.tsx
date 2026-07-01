@@ -1,4 +1,6 @@
 import dynamic from "next/dynamic";
+import { PageContainer, PageShell } from "@/components/layout/page-container";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { createClient } from "@/lib/supabase/server";
 import type { Event } from "@/types/database";
 import { notFound } from "next/navigation";
@@ -31,7 +33,24 @@ export default async function EventPage({ params }: Props) {
     .eq("is_active", true)
     .maybeSingle();
 
-  if (error || !event) {
+  if (error) {
+    return (
+      <PageShell>
+        <PageContainer size="sm" className="flex min-h-screen items-center py-12">
+          <Alert variant="destructive" className="w-full">
+            <AlertDescription>
+              <p className="font-medium">เชื่อมต่อฐานข้อมูลไม่ได้</p>
+              <p className="mt-1 text-sm opacity-90">
+                ตรวจสอบการเชื่อมต่อ internet แล้วลองใหม่อีกครั้ง
+              </p>
+            </AlertDescription>
+          </Alert>
+        </PageContainer>
+      </PageShell>
+    );
+  }
+
+  if (!event) {
     notFound();
   }
 

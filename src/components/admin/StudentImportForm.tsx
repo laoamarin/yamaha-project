@@ -1,6 +1,7 @@
 "use client";
 
 import { importStudents } from "@/app/admin/actions";
+import { AdminPageHeader } from "@/components/layout/admin-shell";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,7 +24,6 @@ import {
 import { parseStudentRows, type ParsedStudentRow } from "@/lib/student-import";
 import type { Event } from "@/types/database";
 import {
-  ArrowLeft,
   CheckCircle2,
   FileSpreadsheet,
   Loader2,
@@ -117,15 +117,12 @@ export function StudentImportForm({ event, existingCount }: Props) {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <LinkButton variant="ghost" size="sm" href="/admin/events" className="-ml-2 mb-2">
-          <ArrowLeft className="size-4" />
-          กลับ
-        </LinkButton>
-        <h1 className="text-2xl font-semibold tracking-tight">นำเข้ารายชื่อ</h1>
-        <p className="mt-1 text-sm text-muted-foreground">{event.name}</p>
-      </div>
+    <div className="space-y-5">
+      <AdminPageHeader
+        title="นำเข้ารายชื่อ"
+        subtitle={event.name}
+        backHref="/admin/events"
+      />
 
       <div className="flex flex-wrap gap-2">
         <Badge variant="secondary">มีอยู่แล้ว {existingCount} คน</Badge>

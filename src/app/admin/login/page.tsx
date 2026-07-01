@@ -1,7 +1,7 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
-import { PageContainer, PageShell } from "@/components/layout/page-container";
+import { AdminShell } from "@/components/layout/admin-shell";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -46,63 +46,71 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <PageShell>
-      <PageContainer size="sm" className="flex min-h-screen items-center py-12">
-        <Card className="w-full shadow-sm">
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-2 flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <Music2 className="size-6" />
-            </div>
-            <CardTitle>Admin Login</CardTitle>
-            <CardDescription>ระบบจัดการงานคอนเสิร์ต Yamaha</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">อีเมล</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  autoComplete="email"
-                  className="h-11"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">รหัสผ่าน</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  autoComplete="current-password"
-                  className="h-11"
-                />
-              </div>
+    <AdminShell>
+      <div className="flex min-h-screen flex-col bg-slate-900">
+        <div className="flex flex-1 flex-col items-center justify-center px-6 py-12">
+          <div className="mb-8 flex size-16 items-center justify-center rounded-2xl bg-white/10">
+            <Music2 className="size-8 text-white" />
+          </div>
+          <h1 className="mb-1 text-xl font-bold text-white">Yamaha Admin</h1>
+          <p className="mb-8 text-sm text-slate-400">ระบบจัดการงานคอนเสิร์ต</p>
 
-              {error && (
-                <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
+          <Card className="w-full max-w-sm shadow-xl">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg">เข้าสู่ระบบ</CardTitle>
+              <CardDescription>สำหรับเจ้าหน้าที่ admin เท่านั้น</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">อีเมล</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    autoComplete="email"
+                    className="h-11"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">รหัสผ่าน</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    autoComplete="current-password"
+                    className="h-11"
+                  />
+                </div>
 
-              <Button type="submit" disabled={loading} className="w-full" size="lg">
-                {loading ? (
-                  <>
-                    <Loader2 className="size-4 animate-spin" />
-                    กำลังเข้าสู่ระบบ...
-                  </>
-                ) : (
-                  "เข้าสู่ระบบ"
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
                 )}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </PageContainer>
-    </PageShell>
+
+                <Button type="submit" disabled={loading} className="h-11 w-full">
+                  {loading ? (
+                    <>
+                      <Loader2 className="size-4 animate-spin" />
+                      กำลังเข้าสู่ระบบ...
+                    </>
+                  ) : (
+                    "เข้าสู่ระบบ"
+                  )}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+        <p className="pb-6 text-center text-xs text-slate-600">
+          ผู้ปกครองใช้ลิงก์ QR /event/... ไม่ต้อง login
+        </p>
+      </div>
+    </AdminShell>
   );
 }
