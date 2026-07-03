@@ -29,6 +29,12 @@ create table students (
   nickname text,
   instrument text,
   teacher_name text,
+  certificate_name_source text
+    check (
+      certificate_name_source is null
+      or certificate_name_source in ('full_name', 'nickname', 'no_prefix', 'custom')
+    ),
+  certificate_name text,
   search_name text generated always as (
     lower(regexp_replace(coalesce(full_name,'') || ' ' || coalesce(nickname,''), '[ด.ช.ด.ญ()]', '', 'g'))
   ) stored

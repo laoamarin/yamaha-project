@@ -2,6 +2,7 @@
 
 import { CertificatePreviewButton, CertificateSettingsPanel } from "@/components/admin/CertificateSettings";
 import { ResetRegistrationButton } from "@/components/admin/ResetRegistrationButton";
+import { StudentCertificateNameEditor } from "@/components/admin/StudentCertificateNameEditor";
 import { eventHasCertificate } from "@/lib/certificate-utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatDateTime, formatEventDate } from "@/lib/format";
+import { getCertificateDisplayName } from "@/lib/certificate-name";
 import { formatStudentName, normalizeSearchQuery } from "@/lib/event-utils";
 import type { Event, Registration, Student } from "@/types/database";
 import { createClient } from "@/lib/supabase/client";
@@ -99,6 +101,9 @@ export function RegistrationDashboard({
     };
   }, [event.id]);
 
+  const eventDefault =
+    event.certificate_config?.default_name_source ?? "full_name";
+
   const filtered = useMemo(() => {
     const q = normalizeSearchQuery(search);
     return rows.filter((row) => {
@@ -130,6 +135,7 @@ export function RegistrationDashboard({
     const header = [
       "ชื่อ-นามสกุล",
       "ชื่อเล่น",
+      "ชื่อบนเกียรติบัตร",
       "วิชา",
       "ครูผู้สอน",
       "สถานะ",
@@ -138,6 +144,7 @@ export function RegistrationDashboard({
     const lines = filtered.map((row) => [
       row.full_name,
       row.nickname ?? "",
+      getCertificateDisplayName(row, eventDefault),
       row.instrument ?? "",
       row.teacher_name ?? "",
       row.registration ? "ลงทะเบียนแล้ว" : "ยังไม่ลงทะเบียน",
@@ -248,6 +255,11 @@ export function RegistrationDashboard({
                 <TableRow>
                   <TableHead className="w-10">#</TableHead>
                   <TableHead>ชื่อ-นามสกุล</TableHead>
+                  {eventHasCertificate(event) && (
+                    <TableHead className="hidden lg:table-cell">
+                      ชื่อเกียรติบัตร
+                    </TableHead>
+                  )}
                   <TableHead className="hidden sm:table-cell">ครู</TableHead>
                   <TableHead>สถานะ</TableHead>
                   <TableHead className="hidden md:table-cell">เวลา</TableHead>
@@ -258,7 +270,7 @@ export function RegistrationDashboard({
               <TableBody>
                 {paginated.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
+                    <TableCell colSpan={eventHasCertificate(event) ? 8 : 7} className="py-10 text-center text-muted-foreground">
                       ไม่พบรายชื่อ
                     </TableCell>
                   </TableRow>
@@ -276,6 +288,21 @@ export function RegistrationDashboard({
                           </p>
                         )}
                       </TableCell>
+                      {eventHasCertificate(event) && (
+                        <TableCell className="hidden lg:table-cell">
+                          <StudentCertificateNameEditor
+                            event={event}
+                            student={row}
+                            onUpdated={(updated) =>
+                              setRows((prev) =>
+                                prev.map((r) =>
+                                  r.id === updated.id ? { ...r, ...updated } : r
+                                )
+                              )
+                            }
+                          />
+                        </TableCell>
+                      )}
                       <TableCell className="hidden sm:table-cell text-muted-foreground">
                         {row.teacher_name ?? "—"}
                       </TableCell>
@@ -298,7 +325,7 @@ export function RegistrationDashboard({
                       <TableCell className="text-center">
                         <CertificatePreviewButton
                           event={event}
-                          studentName={row.full_name}
+                          student={row}
                           registered={Boolean(row.registration)}
                         />
                       </TableCell>

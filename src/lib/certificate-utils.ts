@@ -1,6 +1,7 @@
 import type { CertificateConfig } from "@/types/database";
 
 export const DEFAULT_CERTIFICATE_CONFIG: CertificateConfig = {
+  default_name_source: "full_name",
   x_pct: 50,
   y_pct: 42,
   font_size: 48,

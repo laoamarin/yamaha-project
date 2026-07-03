@@ -1,5 +1,6 @@
 import { PublicCertificateView } from "@/components/certificate/PublicCertificateView";
 import { PublicBody, PublicHeader, PublicShell } from "@/components/layout/public-shell";
+import { getCertificateDisplayName } from "@/lib/certificate-name";
 import { formatEventDate } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
 import type { CertificateConfig } from "@/types/database";
@@ -58,6 +59,11 @@ export default async function PublicCertificatePage({ params }: Props) {
     ? `${student.full_name} (${student.nickname})`
     : student.full_name;
 
+  const certificateName = getCertificateDisplayName(
+    student,
+    config.default_name_source
+  );
+
   return (
     <PublicShell>
       <PublicHeader
@@ -70,9 +76,9 @@ export default async function PublicCertificatePage({ params }: Props) {
         <PublicCertificateView
           templateUrl={event.certificate_template_url}
           config={config}
-          studentName={student.full_name}
+          studentName={certificateName}
           displayLabel={displayLabel}
-          filename={`certificate-${student.full_name.replace(/\s+/g, "-")}.png`}
+          filename={`certificate-${certificateName.replace(/\s+/g, "-")}.png`}
         />
       </PublicBody>
     </PublicShell>

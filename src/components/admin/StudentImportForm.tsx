@@ -1,5 +1,6 @@
 "use client";
 
+import { AddStudentForm } from "@/components/admin/AddStudentForm";
 import { importStudents } from "@/app/admin/actions";
 import { AdminPageHeader } from "@/components/layout/admin-shell";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -148,6 +149,8 @@ export function StudentImportForm({ event, existingCount }: Props) {
         </Alert>
       )}
 
+      <AddStudentForm eventId={event.id} />
+
       <Card className="shadow-sm">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
@@ -156,7 +159,7 @@ export function StudentImportForm({ event, existingCount }: Props) {
           </CardTitle>
           <CardDescription>
             รองรับ .xlsx / .xls — คอลัมน์: full_name, nickname, instrument,
-            teacher_name
+            teacher_name, certificate_name_source, certificate_name (ไม่บังคับ)
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

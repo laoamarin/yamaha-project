@@ -4,8 +4,15 @@ export type ExtraField = {
   required: boolean;
 };
 
+export type CertificateNameSource =
+  | "full_name"
+  | "nickname"
+  | "no_prefix"
+  | "custom";
+
 export type CertificateConfig = {
   enabled?: boolean;
+  default_name_source?: CertificateNameSource;
   x_pct: number;
   y_pct: number;
   font_size: number;
@@ -35,6 +42,8 @@ export type Student = {
   nickname: string | null;
   instrument: string | null;
   teacher_name: string | null;
+  certificate_name_source: CertificateNameSource | null;
+  certificate_name: string | null;
   search_name: string;
 };
 

@@ -5,6 +5,7 @@ import {
   loadCertificateTemplate,
   renderCertificateToCanvas,
 } from "@/lib/certificate-utils";
+import { getCertificateDisplayName } from "@/lib/certificate-name";
 import { formatStudentName } from "@/lib/event-utils";
 import { Button } from "@/components/ui/button";
 import { LinkButton } from "@/components/ui/link-button";
@@ -33,6 +34,7 @@ export function CertificateBatchPreview({ event, students, backHref }: Props) {
 
   const templateUrl = event.certificate_template_url!;
   const config = event.certificate_config as CertificateConfig;
+  const eventDefault = config.default_name_source ?? "full_name";
 
   useEffect(() => {
     let cancelled = false;
@@ -49,10 +51,11 @@ export function CertificateBatchPreview({ event, students, backHref }: Props) {
         for (let i = 0; i < students.length; i++) {
           if (cancelled) return;
           const student = students[i];
+          const displayName = getCertificateDisplayName(student, eventDefault);
           const canvas = await renderCertificateToCanvas(
             templateUrl,
             config,
-            student.full_name,
+            displayName,
             templateImg
           );
           rendered.push({ student, canvas });
@@ -77,7 +80,7 @@ export function CertificateBatchPreview({ event, students, backHref }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [templateUrl, config, students]);
+  }, [templateUrl, config, students, eventDefault]);
 
   const handlePrint = useCallback(() => {
     window.print();
@@ -89,7 +92,7 @@ export function CertificateBatchPreview({ event, students, backHref }: Props) {
       await exportCertificatesPdf(
         items.map((item) => ({
           canvas: item.canvas,
-          name: item.student.full_name,
+          name: getCertificateDisplayName(item.student, eventDefault),
         })),
         `certificates-${event.event_date}.pdf`
       );
@@ -177,7 +180,7 @@ export function CertificateBatchPreview({ event, students, backHref }: Props) {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={item.canvas.toDataURL("image/jpeg", 0.92)}
-                    alt={`เกียรติบัตร ${item.student.full_name}`}
+                    alt={`เกียรติบัตร ${getCertificateDisplayName(item.student, eventDefault)}`}
                     className="block max-w-full"
                   />
                 </div>

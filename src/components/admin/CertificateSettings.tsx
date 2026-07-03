@@ -2,6 +2,7 @@
 
 import { toggleCertificateEnabled } from "@/app/admin/actions";
 import { CertificatePreviewDialog } from "@/components/certificate/CertificatePreviewDialog";
+import { getCertificateDisplayName } from "@/lib/certificate-name";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,20 +10,20 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { LinkButton } from "@/components/ui/link-button";
-import type { Event } from "@/types/database";
+import type { Event, Student } from "@/types/database";
 import { Award, Eye, Loader2, Settings2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 
 type Props = {
   event: Event;
-  studentName: string;
+  student: Student;
   registered: boolean;
 };
 
 export function CertificatePreviewButton({
   event,
-  studentName,
+  student,
   registered,
 }: Props) {
   const [open, setOpen] = useState(false);
@@ -32,6 +33,11 @@ export function CertificatePreviewButton({
     Boolean(
       event.certificate_config?.enabled ?? event.certificate_template_url
     );
+
+  const displayName = getCertificateDisplayName(
+    student,
+    event.certificate_config?.default_name_source
+  );
 
   if (!registered || !hasCertificate) {
     return <span className="text-muted-foreground">—</span>;
@@ -49,7 +55,7 @@ export function CertificatePreviewButton({
       </Button>
       <CertificatePreviewDialog
         event={event}
-        studentName={studentName}
+        studentName={displayName}
         open={open}
         onOpenChange={setOpen}
       />

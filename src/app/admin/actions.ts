@@ -1,9 +1,10 @@
 "use server";
 
 import { DEFAULT_CERTIFICATE_CONFIG } from "@/lib/certificate-utils";
+import { normalizeStudentInput, type ParsedStudentRow, type StudentInput } from "@/lib/student-import";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
-import type { CertificateConfig, Event, ExtraField } from "@/types/database";
+import type { CertificateConfig, CertificateNameSource, Event, ExtraField } from "@/types/database";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -98,12 +99,7 @@ export async function createEvent(formData: FormData) {
 
 export async function importStudents(
   eventId: string,
-  students: {
-    full_name: string;
-    nickname: string | null;
-    instrument: string | null;
-    teacher_name: string | null;
-  }[]
+  students: ParsedStudentRow[]
 ) {
   const supabase = createClient();
   const {
@@ -134,6 +130,8 @@ export async function importStudents(
     nickname: s.nickname,
     instrument: s.instrument,
     teacher_name: s.teacher_name,
+    certificate_name_source: s.certificate_name_source,
+    certificate_name: s.certificate_name,
   }));
 
   const CHUNK = 50;
@@ -151,6 +149,105 @@ export async function importStudents(
   revalidatePath(`/admin/events/${eventId}/import`);
   revalidatePath("/admin/events");
   return { success: true, inserted };
+}
+
+export async function addStudent(eventId: string, data: StudentInput) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "กรุณาเข้าสู่ระบบ" };
+  }
+
+  const normalized = normalizeStudentInput(data);
+  if ("error" in normalized) {
+    return { error: normalized.error };
+  }
+
+  const { data: event, error: eventError } = await supabase
+    .from("events")
+    .select("id")
+    .eq("id", eventId)
+    .maybeSingle();
+
+  if (eventError || !event) {
+    return { error: "ไม่พบงานนี้" };
+  }
+
+  const service = createServiceClient();
+  const { data: student, error } = await service
+    .from("students")
+    .insert({
+      event_id: eventId,
+      full_name: normalized.full_name,
+      nickname: normalized.nickname,
+      instrument: normalized.instrument,
+      teacher_name: normalized.teacher_name,
+      certificate_name_source: normalized.certificate_name_source,
+      certificate_name: normalized.certificate_name,
+    })
+    .select(
+      "id, full_name, nickname, instrument, teacher_name, certificate_name_source, certificate_name"
+    )
+    .single();
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath(`/admin/events/${eventId}/import`);
+  revalidatePath(`/admin/events/${eventId}/dashboard`);
+  revalidatePath("/admin/events");
+  return { success: true, student };
+}
+
+export async function updateStudentCertificateName(
+  eventId: string,
+  studentId: string,
+  data: {
+    certificate_name_source: CertificateNameSource | null;
+    certificate_name?: string | null;
+  }
+) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "กรุณาเข้าสู่ระบบ" };
+  }
+
+  if (data.certificate_name_source === "custom" && !data.certificate_name?.trim()) {
+    return { error: "กรุณากรอกชื่อเมื่อเลือก 'กำหนดเอง'" };
+  }
+
+  const service = createServiceClient();
+  const { data: student, error } = await service
+    .from("students")
+    .update({
+      certificate_name_source: data.certificate_name_source,
+      certificate_name:
+        data.certificate_name_source === "custom"
+          ? data.certificate_name?.trim() || null
+          : null,
+    })
+    .eq("id", studentId)
+    .eq("event_id", eventId)
+    .select(
+      "id, full_name, nickname, certificate_name_source, certificate_name"
+    )
+    .single();
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath(`/admin/events/${eventId}/dashboard`);
+  revalidatePath(`/admin/events/${eventId}/import`);
+  return { success: true, student };
 }
 
 export async function updateEvent(eventId: string, formData: FormData) {

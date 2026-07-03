@@ -9,7 +9,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "tsx scripts/seed-event.ts"
+    "seed": "tsx scripts/seed-event.ts",
+    "smoke:add-student": "tsx scripts/smoke-add-student.ts",
+    "smoke:certificate-name": "tsx scripts/smoke-certificate-name.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

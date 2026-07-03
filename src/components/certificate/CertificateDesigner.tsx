@@ -31,6 +31,7 @@ import {
   DEFAULT_CERTIFICATE_CONFIG,
   fileToBase64,
 } from "@/lib/certificate-utils";
+import { CERTIFICATE_NAME_SOURCE_OPTIONS } from "@/lib/certificate-name";
 import type { CertificateConfig, Event } from "@/types/database";
 import {
   AlignCenter,
@@ -251,6 +252,31 @@ export function CertificateDesigner({ event }: Props) {
             <CardTitle className="text-base">ตั้งค่าตัวอักษร</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="default_name_source">ชื่อเริ่มต้นบนเกียรติบัตร</Label>
+              <select
+                id="default_name_source"
+                value={config.default_name_source ?? "full_name"}
+                onChange={(e) =>
+                  setConfig((c) => ({
+                    ...c,
+                    default_name_source: e.target.value as CertificateConfig["default_name_source"],
+                  }))
+                }
+                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+              >
+                {CERTIFICATE_NAME_SOURCE_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label} — {opt.description}
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs text-muted-foreground">
+                ใช้กับนักเรียนที่ไม่ได้กำหนดแหล่งชื่อเฉพาะ (หรือ import โดยไม่ใส่
+                certificate_name_source)
+              </p>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="font_size">ขนาดตัวอักษร</Label>
               <Input
