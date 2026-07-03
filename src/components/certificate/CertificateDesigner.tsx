@@ -26,12 +26,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LinkButton } from "@/components/ui/link-button";
+import { CertificateNameFieldSelect } from "@/components/admin/CertificateNameFieldSelect";
 import {
   CERTIFICATE_FONT_OPTIONS,
   DEFAULT_CERTIFICATE_CONFIG,
-  fileToBase64,
 } from "@/lib/certificate-utils";
-import { CERTIFICATE_NAME_SOURCE_OPTIONS } from "@/lib/certificate-name";
+import { uploadCertificateTemplate } from "@/lib/certificate-upload";
 import type { CertificateConfig, Event } from "@/types/database";
 import {
   AlignCenter,
@@ -98,24 +98,25 @@ export function CertificateDesigner({ event }: Props) {
     setLoading(true);
 
     try {
-      let templatePayload: {
-        templateBase64?: string;
-        templateContentType?: string;
-        templateFileName?: string;
-      } = {};
+      let uploadedTemplateUrl: string | undefined;
 
       if (templateFile) {
-        templatePayload = {
-          templateBase64: await fileToBase64(templateFile),
-          templateContentType: templateFile.type || "image/jpeg",
-          templateFileName: templateFile.name,
-        };
+        const uploadResult = await uploadCertificateTemplate(
+          event.id,
+          templateFile
+        );
+        if ("error" in uploadResult) {
+          setResultDialog({ type: "error", message: uploadResult.error });
+          setError(uploadResult.error);
+          return;
+        }
+        uploadedTemplateUrl = uploadResult.url;
       }
 
       const result = await saveCertificateSettings(event.id, {
         config: { ...config, enabled: true },
         certificates_released: released,
-        ...templatePayload,
+        templateUrl: uploadedTemplateUrl,
       });
 
       if (result?.error) {
@@ -254,26 +255,21 @@ export function CertificateDesigner({ event }: Props) {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="default_name_source">ชื่อเริ่มต้นบนเกียรติบัตร</Label>
-              <select
+              <CertificateNameFieldSelect
                 id="default_name_source"
+                event={event}
                 value={config.default_name_source ?? "full_name"}
-                onChange={(e) =>
+                onChange={(value) =>
                   setConfig((c) => ({
                     ...c,
-                    default_name_source: e.target.value as CertificateConfig["default_name_source"],
+                    default_name_source: value,
                   }))
                 }
                 className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-              >
-                {CERTIFICATE_NAME_SOURCE_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label} — {opt.description}
-                  </option>
-                ))}
-              </select>
+              />
               <p className="text-xs text-muted-foreground">
-                ใช้กับนักเรียนที่ไม่ได้กำหนดแหล่งชื่อเฉพาะ (หรือ import โดยไม่ใส่
-                certificate_name_source)
+                เลือก column/field ที่จะแสดงบนเกียรติบัตร — รองรับคอลัมน์จาก Excel
+                (เช่น english_name, ชื่อไทย) และ override รายคนที่หน้ารายชื่อ
               </p>
             </div>
 

@@ -3,6 +3,7 @@
 import { CertificatePreviewButton, CertificateSettingsPanel } from "@/components/admin/CertificateSettings";
 import { ResetRegistrationButton } from "@/components/admin/ResetRegistrationButton";
 import { StudentCertificateNameEditor } from "@/components/admin/StudentCertificateNameEditor";
+import { StudentNameEditor } from "@/components/admin/StudentNameEditor";
 import { eventHasCertificate } from "@/lib/certificate-utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,7 @@ import {
 } from "@/components/ui/table";
 import { formatDateTime, formatEventDate } from "@/lib/format";
 import { getCertificateDisplayName } from "@/lib/certificate-name";
-import { formatStudentName, normalizeSearchQuery } from "@/lib/event-utils";
+import { normalizeSearchQuery } from "@/lib/event-utils";
 import type { Event, Registration, Student } from "@/types/database";
 import { createClient } from "@/lib/supabase/client";
 import { Download, Eye, Loader2, Search } from "lucide-react";
@@ -171,33 +172,40 @@ export function RegistrationDashboard({
       <CertificateSettingsPanel event={event} />
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-3">
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold">{rows.length}</p>
-            <p className="text-xs text-muted-foreground">ทั้งหมด</p>
+      <div className="grid gap-4 sm:grid-cols-3">
+        <Card className="shadow-sm">
+          <CardContent className="p-5">
+            <p className="text-sm text-muted-foreground">ทั้งหมด</p>
+            <p className="mt-2 text-3xl font-semibold">{rows.length}</p>
+            <p className="mt-1 text-xs text-muted-foreground">นักเรียนในระบบ</p>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-emerald-600">
+        <Card className="shadow-sm">
+          <CardContent className="p-5">
+            <p className="text-sm text-muted-foreground">ลงทะเบียนแล้ว</p>
+            <p className="mt-2 text-3xl font-semibold text-emerald-600">
               {registeredCount}
             </p>
-            <p className="text-xs text-muted-foreground">ลงทะเบียนแล้ว</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {rows.length > 0
+                ? `${Math.round((registeredCount / rows.length) * 100)}% ของทั้งหมด`
+                : "—"}
+            </p>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold text-amber-600">
+        <Card className="shadow-sm">
+          <CardContent className="p-5">
+            <p className="text-sm text-muted-foreground">ยังไม่มา</p>
+            <p className="mt-2 text-3xl font-semibold text-amber-600">
               {rows.length - registeredCount}
             </p>
-            <p className="text-xs text-muted-foreground">ยังไม่มา</p>
+            <p className="mt-1 text-xs text-muted-foreground">รอการลงทะเบียน</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="text-base">
             รายชื่อ — {formatEventDate(event.event_date)}
@@ -256,8 +264,8 @@ export function RegistrationDashboard({
                   <TableHead className="w-10">#</TableHead>
                   <TableHead>ชื่อ-นามสกุล</TableHead>
                   {eventHasCertificate(event) && (
-                    <TableHead className="hidden lg:table-cell">
-                      ชื่อเกียรติบัตร
+                    <TableHead className="hidden md:table-cell min-w-[200px]">
+                      ชื่อเกียรติบัตร (field)
                     </TableHead>
                   )}
                   <TableHead className="hidden sm:table-cell">ครู</TableHead>
@@ -281,7 +289,17 @@ export function RegistrationDashboard({
                         {(safePage - 1) * pageSize + i + 1}
                       </TableCell>
                       <TableCell>
-                        <p className="font-medium">{formatStudentName(row)}</p>
+                        <StudentNameEditor
+                          eventId={event.id}
+                          student={row}
+                          onUpdated={(updated) =>
+                            setRows((prev) =>
+                              prev.map((r) =>
+                                r.id === updated.id ? { ...r, ...updated } : r
+                              )
+                            )
+                          }
+                        />
                         {row.teacher_name && (
                           <p className="text-xs text-muted-foreground sm:hidden">
                             ครู {row.teacher_name}
@@ -289,7 +307,7 @@ export function RegistrationDashboard({
                         )}
                       </TableCell>
                       {eventHasCertificate(event) && (
-                        <TableCell className="hidden lg:table-cell">
+                        <TableCell className="hidden md:table-cell">
                           <StudentCertificateNameEditor
                             event={event}
                             student={row}

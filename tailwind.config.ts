@@ -43,6 +43,13 @@ const config: Config = {
         border: "var(--border)",
         input: "var(--input)",
         ring: "var(--ring)",
+        yamaha: {
+          purple: "#4A2E82",
+          "purple-light": "#6B4FA8",
+          "purple-dark": "#3A2368",
+          "purple-pale": "#F3EEF8",
+          "purple-muted": "#E4DBF0",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -51,6 +58,9 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+      },
+      boxShadow: {
+        "yamaha-soft": "0 4px 24px -4px rgba(74, 46, 130, 0.12)",
       },
       keyframes: {
         "accordion-down": {

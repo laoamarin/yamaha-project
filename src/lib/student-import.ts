@@ -1,12 +1,17 @@
-import { parseCertificateNameSource } from "@/lib/certificate-name";
-import type { CertificateNameSource } from "@/types/database";
+import { parseCertificateNameField } from "@/lib/certificate-name";
+import {
+  headerToFieldKey,
+  isReservedImportHeader,
+} from "@/lib/student-fields";
+import type { StudentField } from "@/types/database";
 
 export type ParsedStudentRow = {
   full_name: string;
   nickname: string | null;
   instrument: string | null;
   teacher_name: string | null;
-  certificate_name_source: CertificateNameSource | null;
+  extra_data: Record<string, string>;
+  certificate_name_source: string | null;
   certificate_name: string | null;
 };
 
@@ -15,7 +20,8 @@ export type StudentInput = {
   nickname?: string | null;
   instrument?: string | null;
   teacher_name?: string | null;
-  certificate_name_source?: CertificateNameSource | null;
+  extra_data?: Record<string, string>;
+  certificate_name_source?: string | null;
   certificate_name?: string | null;
 };
 
@@ -40,12 +46,16 @@ export function normalizeStudentInput(
     nickname: data.nickname?.trim() || fromParen || null,
     instrument: data.instrument?.trim() || null,
     teacher_name: data.teacher_name?.trim() || null,
+    extra_data: data.extra_data ?? {},
     certificate_name_source: source,
     certificate_name: customName,
   };
 }
 
-const COLUMN_ALIASES: Record<keyof ParsedStudentRow, string[]> = {
+const COLUMN_ALIASES: Record<
+  Exclude<keyof ParsedStudentRow, "extra_data">,
+  string[]
+> = {
   full_name: ["full_name", "fullname", "name", "ชื่อ", "ชื่อ-นามสกุล", "ชื่อนามสกุล"],
   nickname: ["nickname", "nick", "ชื่อเล่น"],
   instrument: ["instrument", "subject", "วิชา", "เครื่องดนตรี"],
@@ -71,7 +81,7 @@ function normalizeHeader(header: string): string {
 
 function findColumnKey(
   headers: string[],
-  field: keyof ParsedStudentRow
+  field: Exclude<keyof ParsedStudentRow, "extra_data">
 ): string | null {
   const aliases = COLUMN_ALIASES[field].map(normalizeHeader);
   for (const header of headers) {
@@ -92,9 +102,47 @@ export function extractNicknameFromName(fullName: string): {
   return { name: fullName.trim(), nickname: null };
 }
 
+function extractExtraData(
+  row: Record<string, unknown>,
+  columnMap: Record<Exclude<keyof ParsedStudentRow, "extra_data">, string | null>,
+  headers: string[]
+): Record<string, string> {
+  const used = new Set(Object.values(columnMap).filter(Boolean));
+  const extra: Record<string, string> = {};
+
+  for (const header of headers) {
+    if (used.has(header) || isReservedImportHeader(header)) continue;
+    const key = headerToFieldKey(header);
+    const value = String(row[header] ?? "").trim();
+    if (value) extra[key] = value;
+  }
+
+  return extra;
+}
+
+export function discoverStudentFields(headers: string[]): StudentField[] {
+  const columnMap = {
+    full_name: findColumnKey(headers, "full_name"),
+    nickname: findColumnKey(headers, "nickname"),
+    instrument: findColumnKey(headers, "instrument"),
+    teacher_name: findColumnKey(headers, "teacher_name"),
+    certificate_name_source: findColumnKey(headers, "certificate_name_source"),
+    certificate_name: findColumnKey(headers, "certificate_name"),
+  };
+  const used = new Set(Object.values(columnMap).filter(Boolean));
+
+  return headers
+    .filter((h) => !used.has(h) && !isReservedImportHeader(h))
+    .map((header) => ({
+      key: headerToFieldKey(header),
+      label: header.trim(),
+    }));
+}
+
 export function mapRawRow(
   row: Record<string, unknown>,
-  columnMap: Record<keyof ParsedStudentRow, string | null>
+  columnMap: Record<Exclude<keyof ParsedStudentRow, "extra_data">, string | null>,
+  headers: string[]
 ): ParsedStudentRow | null {
   const rawName = String(row[columnMap.full_name!] ?? "").trim();
   if (!rawName) return null;
@@ -117,24 +165,28 @@ export function mapRawRow(
     ? String(row[columnMap.certificate_name] ?? "").trim()
     : "";
 
-  const certificate_name_source = parseCertificateNameSource(sourceRaw);
+  const certificate_name_source = parseCertificateNameField(sourceRaw);
   const certificate_name = certNameCol || null;
+  const extra_data = extractExtraData(row, columnMap, headers);
 
   return {
     full_name: name,
     nickname: nicknameCol || fromParen || null,
     instrument: instrumentCol || null,
     teacher_name: teacherCol || null,
+    extra_data,
     certificate_name_source,
     certificate_name,
   };
 }
 
-export function parseStudentRows(
-  rawRows: Record<string, unknown>[]
-): { students: ParsedStudentRow[]; error?: string } {
+export function parseStudentRows(rawRows: Record<string, unknown>[]): {
+  students: ParsedStudentRow[];
+  discoveredFields: StudentField[];
+  error?: string;
+} {
   if (rawRows.length === 0) {
-    return { students: [], error: "ไฟล์ว่างเปล่า" };
+    return { students: [], discoveredFields: [], error: "ไฟล์ว่างเปล่า" };
   }
 
   const headers = Object.keys(rawRows[0] ?? {});
@@ -150,18 +202,22 @@ export function parseStudentRows(
   if (!columnMap.full_name) {
     return {
       students: [],
+      discoveredFields: [],
       error:
         "ไม่พบคอลัมน์ชื่อ (full_name) — ต้องมี header เช่น full_name, ชื่อ-นามสกุล",
     };
   }
 
   const students = rawRows
-    .map((row) => mapRawRow(row, columnMap))
+    .map((row) => mapRawRow(row, columnMap, headers))
     .filter((s): s is ParsedStudentRow => s !== null);
 
   if (students.length === 0) {
-    return { students: [], error: "ไม่พบข้อมูลนักเรียนในไฟล์" };
+    return { students: [], discoveredFields: [], error: "ไม่พบข้อมูลนักเรียนในไฟล์" };
   }
 
-  return { students };
+  return {
+    students,
+    discoveredFields: discoverStudentFields(headers),
+  };
 }

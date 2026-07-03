@@ -41,16 +41,6 @@ export async function loadCertificateFont(family: string): Promise<void> {
   LOADED_FONTS.add(family);
 }
 
-export async function fileToBase64(file: File): Promise<string> {
-  const buffer = await file.arrayBuffer();
-  const bytes = new Uint8Array(buffer);
-  let binary = "";
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary);
-}
-
 const templateCache = new Map<string, HTMLImageElement>();
 
 export async function loadCertificateTemplate(

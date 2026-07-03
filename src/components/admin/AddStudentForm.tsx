@@ -1,6 +1,7 @@
 "use client";
 
 import { addStudent } from "@/app/admin/actions";
+import { CertificateNameFieldSelect } from "@/components/admin/CertificateNameFieldSelect";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,26 +13,23 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import type { Event } from "@/types/database";
 import { Loader2, UserPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { CERTIFICATE_NAME_SOURCE_OPTIONS } from "@/lib/certificate-name";
-import type { CertificateNameSource } from "@/types/database";
 
 type Props = {
-  eventId: string;
+  event: Event;
   onAdded?: () => void;
 };
 
-export function AddStudentForm({ eventId, onAdded }: Props) {
+export function AddStudentForm({ event, onAdded }: Props) {
   const router = useRouter();
   const [fullName, setFullName] = useState("");
   const [nickname, setNickname] = useState("");
   const [instrument, setInstrument] = useState("");
   const [teacherName, setTeacherName] = useState("");
-  const [certNameSource, setCertNameSource] = useState<
-    CertificateNameSource | ""
-  >("");
+  const [certNameSource, setCertNameSource] = useState("");
   const [certName, setCertName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,7 +41,7 @@ export function AddStudentForm({ eventId, onAdded }: Props) {
     setError(null);
     setSuccess(null);
 
-    const result = await addStudent(eventId, {
+    const result = await addStudent(event.id, {
       full_name: fullName,
       nickname: nickname || null,
       instrument: instrument || null,
@@ -97,9 +95,6 @@ export function AddStudentForm({ eventId, onAdded }: Props) {
                 required
                 className="h-11"
               />
-              <p className="text-xs text-muted-foreground">
-                ใส่ชื่อเล่นในวงเล็บได้ เช่น นายทดสอบ (Test)
-              </p>
             </div>
 
             <div className="space-y-2">
@@ -137,21 +132,14 @@ export function AddStudentForm({ eventId, onAdded }: Props) {
 
             <div className="space-y-2 sm:col-span-2">
               <Label htmlFor="add-cert-source">ชื่อบนเกียรติบัตร (ไม่บังคับ)</Label>
-              <select
+              <CertificateNameFieldSelect
                 id="add-cert-source"
+                event={event}
                 value={certNameSource}
-                onChange={(e) =>
-                  setCertNameSource(e.target.value as CertificateNameSource | "")
-                }
+                showDefaultOption
+                onChange={setCertNameSource}
                 className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm"
-              >
-                <option value="">ใช้ค่าเริ่มต้นงาน</option>
-                {CERTIFICATE_NAME_SOURCE_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
 
             {certNameSource === "custom" && (

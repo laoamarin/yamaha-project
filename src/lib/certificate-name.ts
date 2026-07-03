@@ -1,4 +1,9 @@
-import type { CertificateNameSource } from "@/types/database";
+import {
+  getCertificateNameFieldOptions,
+  getStudentFieldLabel,
+  getStudentFieldValue,
+} from "@/lib/student-fields";
+import type { StudentField } from "@/types/database";
 
 /** Strip Thai/English honorific prefixes for certificate display */
 export function stripHonorificPrefix(name: string): string {
@@ -10,40 +15,22 @@ export function stripHonorificPrefix(name: string): string {
     .trim();
 }
 
-export const CERTIFICATE_NAME_SOURCE_OPTIONS: {
-  value: CertificateNameSource;
-  label: string;
-  description: string;
-}[] = [
-  {
-    value: "full_name",
-    label: "ชื่อ-นามสกุลเต็ม",
-    description: "ใช้ full_name ตามที่ import",
-  },
-  {
-    value: "nickname",
-    label: "ชื่อเล่น",
-    description: "ใช้ nickname (ถ้าไม่มี → ชื่อเต็ม)",
-  },
-  {
-    value: "no_prefix",
-    label: "ชื่อเต็ม (ไม่มีคำนำหน้า)",
-    description: "ตัด ด.ช./ด.ญ./นาย/น.ส. ออก",
-  },
-  {
-    value: "custom",
-    label: "กำหนดเอง",
-    description: "พิมพ์ชื่อที่ต้องการแสดงบนเกียรติบัตร",
-  },
-];
+/** @deprecated use getCertificateNameFieldOptions */
+export const CERTIFICATE_NAME_SOURCE_OPTIONS = getCertificateNameFieldOptions(
+  []
+).map((f) => ({
+  value: f.key,
+  label: f.label.split(" (")[0],
+  description: f.label,
+}));
 
-export function parseCertificateNameSource(
+export function parseCertificateNameField(
   value: string | null | undefined
-): CertificateNameSource | null {
+): string | null {
   if (!value?.trim()) return null;
   const v = value.trim().toLowerCase().replace(/\s+/g, "_");
 
-  const map: Record<string, CertificateNameSource> = {
+  const legacy: Record<string, string> = {
     full_name: "full_name",
     fullname: "full_name",
     name: "full_name",
@@ -61,48 +48,66 @@ export function parseCertificateNameSource(
     other: "custom",
   };
 
-  return map[v] ?? null;
+  return legacy[v] ?? normalizeFieldKey(v);
 }
 
-export function resolveCertificateNameSource(
-  studentSource: CertificateNameSource | null | undefined,
-  eventDefault?: CertificateNameSource | null
-): CertificateNameSource {
-  return studentSource ?? eventDefault ?? "full_name";
+/** @deprecated */
+export const parseCertificateNameSource = parseCertificateNameField;
+
+function normalizeFieldKey(key: string): string {
+  return key.trim().toLowerCase().replace(/\s+/g, "_");
+}
+
+export function resolveCertificateNameField(
+  studentField: string | null | undefined,
+  eventDefault?: string | null
+): string {
+  return studentField ?? eventDefault ?? "full_name";
 }
 
 export function getCertificateDisplayName(
   student: {
     full_name: string;
     nickname?: string | null;
-    certificate_name_source?: CertificateNameSource | null;
+    instrument?: string | null;
+    teacher_name?: string | null;
+    extra_data?: Record<string, string> | null;
+    certificate_name_source?: string | null;
     certificate_name?: string | null;
   },
-  eventDefault?: CertificateNameSource | null
+  eventDefault?: string | null
 ): string {
-  const source = resolveCertificateNameSource(
+  const field = resolveCertificateNameField(
     student.certificate_name_source,
     eventDefault
   );
 
-  switch (source) {
-    case "nickname":
-      return student.nickname?.trim() || student.full_name;
-    case "no_prefix":
-      return stripHonorificPrefix(student.full_name) || student.full_name;
-    case "custom":
-      return student.certificate_name?.trim() || student.full_name;
-    case "full_name":
-    default:
-      return student.full_name;
+  if (field === "custom") {
+    return student.certificate_name?.trim() || student.full_name;
   }
+
+  if (field === "no_prefix") {
+    return stripHonorificPrefix(student.full_name) || student.full_name;
+  }
+
+  const value = getStudentFieldValue(student, field);
+  return value || student.full_name;
 }
 
-export function getCertificateNameSourceLabel(
-  source: CertificateNameSource
+export function getCertificateNameFieldLabel(
+  fieldKey: string,
+  studentFields?: StudentField[] | null
 ): string {
-  return (
-    CERTIFICATE_NAME_SOURCE_OPTIONS.find((o) => o.value === source)?.label ??
-    source
-  );
+  return getStudentFieldLabel(fieldKey, studentFields);
 }
+
+/** @deprecated */
+export function getCertificateNameSourceLabel(
+  source: string,
+  studentFields?: StudentField[] | null
+): string {
+  return getCertificateNameFieldLabel(source, studentFields);
+}
+
+/** @deprecated */
+export const resolveCertificateNameSource = resolveCertificateNameField;

@@ -55,11 +55,10 @@ export default function NewEventPage() {
   }
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-3xl">
       <AdminPageHeader
         title="สร้างงานใหม่"
         subtitle="กำหนดรายละเอียดงานและช่องข้อมูลตอนลงทะเบียน"
-        backHref="/admin/events"
       />
 
       <Card>

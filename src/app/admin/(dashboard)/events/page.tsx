@@ -1,6 +1,6 @@
-import { requireAdmin } from "@/lib/supabase/admin";
-import { EventCard } from "@/components/admin/EventCard";
+import { EventsListTable } from "@/components/admin/EventsListTable";
 import { AdminPageHeader } from "@/components/layout/admin-shell";
+import { requireAdmin } from "@/lib/supabase/admin";
 import { LinkButton } from "@/components/ui/link-button";
 import { Plus } from "lucide-react";
 
@@ -20,7 +20,6 @@ export default async function AdminEventsPage() {
     );
   }
 
-  // Fetch counts per event
   const eventsWithCounts = await Promise.all(
     (events ?? []).map(async (event) => {
       const [{ count: studentCount }, { count: registeredCount }] =
@@ -43,12 +42,12 @@ export default async function AdminEventsPage() {
   );
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6 lg:space-y-8">
       <AdminPageHeader
         title="งานคอนเสิร์ต"
-        subtitle="จัดการงานและลิงก์ลงทะเบียน"
+        subtitle="จัดการงาน รายชื่อ และเกียรติบัตร"
         action={
-          <LinkButton href="/admin/events/new" size="sm">
+          <LinkButton href="/admin/events/new">
             <Plus className="size-4" />
             สร้างงาน
           </LinkButton>
@@ -56,7 +55,7 @@ export default async function AdminEventsPage() {
       />
 
       {eventsWithCounts.length === 0 ? (
-        <div className="rounded-xl border border-dashed py-16 text-center">
+        <div className="rounded-xl border border-dashed bg-card py-16 text-center shadow-sm">
           <p className="text-muted-foreground">ยังไม่มีงาน</p>
           <LinkButton href="/admin/events/new" className="mt-4" variant="outline">
             <Plus className="size-4" />
@@ -64,16 +63,7 @@ export default async function AdminEventsPage() {
           </LinkButton>
         </div>
       ) : (
-        <div className="space-y-4">
-          {eventsWithCounts.map(({ event, studentCount, registeredCount }) => (
-            <EventCard
-              key={event.id}
-              event={event}
-              studentCount={studentCount}
-              registeredCount={registeredCount}
-            />
-          ))}
-        </div>
+        <EventsListTable rows={eventsWithCounts} />
       )}
     </div>
   );

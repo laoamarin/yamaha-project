@@ -1,6 +1,6 @@
 import {
   getCertificateDisplayName,
-  parseCertificateNameSource,
+  parseCertificateNameField,
   stripHonorificPrefix,
 } from "../src/lib/certificate-name";
 
@@ -50,19 +50,19 @@ function testGetCertificateDisplayName() {
   assert(
     getCertificateDisplayName({
       full_name: "ด.ญ.Test",
-      nickname: null,
-      certificate_name_source: "nickname",
-    }) === "ด.ญ.Test",
-    "nickname fallback to full_name"
+      extra_data: { english_name: "MYRA NARANG" },
+      certificate_name_source: "english_name",
+    }) === "MYRA NARANG",
+    "custom import field"
   );
 }
 
-function testParseCertificateNameSource() {
-  assert(parseCertificateNameSource("nickname") === "nickname", "english");
-  assert(parseCertificateNameSource("ชื่อเล่น") === "nickname", "thai");
-  assert(parseCertificateNameSource("no_prefix") === "no_prefix", "no_prefix");
-  assert(parseCertificateNameSource("") === null, "empty");
-  assert(parseCertificateNameSource("invalid") === null, "invalid");
+function testParseCertificateNameField() {
+  assert(parseCertificateNameField("nickname") === "nickname", "english");
+  assert(parseCertificateNameField("ชื่อเล่น") === "nickname", "thai");
+  assert(parseCertificateNameField("no_prefix") === "no_prefix", "no_prefix");
+  assert(parseCertificateNameField("") === null, "empty");
+  assert(parseCertificateNameField("english_name") === "english_name", "custom field key");
 }
 
 function testStripHonorificPrefix() {
@@ -76,7 +76,7 @@ function testStripHonorificPrefix() {
 
 function main() {
   testStripHonorificPrefix();
-  testParseCertificateNameSource();
+  testParseCertificateNameField();
   testGetCertificateDisplayName();
   console.log("✓ certificate-name smoke tests passed");
 }

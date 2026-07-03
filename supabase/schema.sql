@@ -12,6 +12,8 @@ create table events (
   qr_token text unique not null default gen_random_uuid()::text,
   cover_image_url text,
   extra_fields jsonb default '[]',
+  student_fields jsonb default '[]',
+  -- custom columns from Excel import for certificate name selection
   -- e.g. [{"key":"phone","label":"เบอร์โทร","required":true},{"key":"registered_by","label":"ชื่อผู้ปกครอง","required":true}]
   certificate_template_url text,
   certificate_config jsonb,
@@ -29,11 +31,8 @@ create table students (
   nickname text,
   instrument text,
   teacher_name text,
-  certificate_name_source text
-    check (
-      certificate_name_source is null
-      or certificate_name_source in ('full_name', 'nickname', 'no_prefix', 'custom')
-    ),
+  extra_data jsonb default '{}',
+  certificate_name_source text,
   certificate_name text,
   search_name text generated always as (
     lower(regexp_replace(coalesce(full_name,'') || ' ' || coalesce(nickname,''), '[ด.ช.ด.ญ()]', '', 'g'))

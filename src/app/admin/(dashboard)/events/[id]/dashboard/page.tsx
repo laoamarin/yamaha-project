@@ -49,7 +49,6 @@ export default async function EventDashboardPage({ params }: Props) {
       <AdminPageHeader
         title="รายชื่อลงทะเบียน"
         subtitle={event.name}
-        backHref="/admin/events"
       />
       <RegistrationDashboard
         event={event}

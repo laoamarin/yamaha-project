@@ -44,6 +44,9 @@ export function StudentImportForm({ event, existingCount }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [students, setStudents] = useState<ParsedStudentRow[]>([]);
+  const [discoveredFields, setDiscoveredFields] = useState<
+    import("@/types/database").StudentField[]
+  >([]);
   const [fileName, setFileName] = useState<string | null>(null);
   const [parseError, setParseError] = useState<string | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
@@ -69,17 +72,21 @@ export function StudentImportForm({ event, existingCount }: Props) {
           defval: "",
         });
 
-        const { students: parsed, error } = parseStudentRows(rawRows);
+        const { students: parsed, discoveredFields: fields, error } =
+          parseStudentRows(rawRows);
         if (error) {
           setParseError(error);
           setStudents([]);
+          setDiscoveredFields([]);
           return;
         }
 
         setStudents(parsed);
+        setDiscoveredFields(fields);
       } catch {
         setParseError("อ่านไฟล์ไม่สำเร็จ — ตรวจสอบว่าเป็น .xlsx หรือ .xls");
         setStudents([]);
+        setDiscoveredFields([]);
       }
     };
     reader.readAsArrayBuffer(file);
@@ -87,6 +94,7 @@ export function StudentImportForm({ event, existingCount }: Props) {
 
   function handleReset() {
     setStudents([]);
+    setDiscoveredFields([]);
     setFileName(null);
     setParseError(null);
     setImportError(null);
@@ -100,7 +108,7 @@ export function StudentImportForm({ event, existingCount }: Props) {
     setImporting(true);
     setImportError(null);
 
-    const result = await importStudents(event.id, students);
+    const result = await importStudents(event.id, students, discoveredFields);
 
     setImporting(false);
 
@@ -122,7 +130,6 @@ export function StudentImportForm({ event, existingCount }: Props) {
       <AdminPageHeader
         title="นำเข้ารายชื่อ"
         subtitle={event.name}
-        backHref="/admin/events"
       />
 
       <div className="flex flex-wrap gap-2">
@@ -149,7 +156,7 @@ export function StudentImportForm({ event, existingCount }: Props) {
         </Alert>
       )}
 
-      <AddStudentForm eventId={event.id} />
+      <AddStudentForm event={event} />
 
       <Card className="shadow-sm">
         <CardHeader>
@@ -158,8 +165,9 @@ export function StudentImportForm({ event, existingCount }: Props) {
             อัปโหลด Excel
           </CardTitle>
           <CardDescription>
-            รองรับ .xlsx / .xls — คอลัมน์: full_name, nickname, instrument,
-            teacher_name, certificate_name_source, certificate_name (ไม่บังคับ)
+            รองรับ .xlsx / .xls — คอลัมน์หลัก: full_name, nickname,
+            instrument, teacher_name · คอลัมน์อื่น (เช่น english_name, ชื่อไทย)
+            จะถูกเก็บเป็น field สำหรับเลือกชื่อเกียรติบัตร
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

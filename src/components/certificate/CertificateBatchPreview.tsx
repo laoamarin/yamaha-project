@@ -51,7 +51,10 @@ export function CertificateBatchPreview({ event, students, backHref }: Props) {
         for (let i = 0; i < students.length; i++) {
           if (cancelled) return;
           const student = students[i];
-          const displayName = getCertificateDisplayName(student, eventDefault);
+          const displayName = getCertificateDisplayName(
+            student,
+            eventDefault
+          );
           const canvas = await renderCertificateToCanvas(
             templateUrl,
             config,
@@ -80,7 +83,7 @@ export function CertificateBatchPreview({ event, students, backHref }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [templateUrl, config, students, eventDefault]);
+  }, [templateUrl, config, students, eventDefault, event.student_fields]);
 
   const handlePrint = useCallback(() => {
     window.print();

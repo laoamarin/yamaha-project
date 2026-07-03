@@ -4,15 +4,17 @@ export type ExtraField = {
   required: boolean;
 };
 
-export type CertificateNameSource =
-  | "full_name"
-  | "nickname"
-  | "no_prefix"
-  | "custom";
+export type StudentField = {
+  key: string;
+  label: string;
+};
+
+export type CertificateNameFieldKey = string;
 
 export type CertificateConfig = {
   enabled?: boolean;
-  default_name_source?: CertificateNameSource;
+  /** Field key from student columns, e.g. full_name, english_name, no_prefix, custom */
+  default_name_source?: CertificateNameFieldKey;
   x_pct: number;
   y_pct: number;
   font_size: number;
@@ -28,6 +30,7 @@ export type Event = {
   qr_token: string;
   cover_image_url: string | null;
   extra_fields: ExtraField[];
+  student_fields?: StudentField[];
   certificate_template_url: string | null;
   certificate_config: CertificateConfig | null;
   certificates_released: boolean;
@@ -42,7 +45,8 @@ export type Student = {
   nickname: string | null;
   instrument: string | null;
   teacher_name: string | null;
-  certificate_name_source: CertificateNameSource | null;
+  extra_data?: Record<string, string> | null;
+  certificate_name_source: CertificateNameFieldKey | null;
   certificate_name: string | null;
   search_name: string;
 };

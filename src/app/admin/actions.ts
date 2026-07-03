@@ -1,10 +1,11 @@
 "use server";
 
 import { DEFAULT_CERTIFICATE_CONFIG } from "@/lib/certificate-utils";
+import { mergeStudentFields } from "@/lib/student-fields";
 import { normalizeStudentInput, type ParsedStudentRow, type StudentInput } from "@/lib/student-import";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
-import type { CertificateConfig, CertificateNameSource, Event, ExtraField } from "@/types/database";
+import type { CertificateConfig, Event, ExtraField, StudentField } from "@/types/database";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -99,7 +100,8 @@ export async function createEvent(formData: FormData) {
 
 export async function importStudents(
   eventId: string,
-  students: ParsedStudentRow[]
+  students: ParsedStudentRow[],
+  discoveredFields: StudentField[] = []
 ) {
   const supabase = createClient();
   const {
@@ -116,12 +118,22 @@ export async function importStudents(
 
   const { data: event, error: eventError } = await supabase
     .from("events")
-    .select("id")
+    .select("id, student_fields")
     .eq("id", eventId)
     .maybeSingle();
 
   if (eventError || !event) {
     return { error: "ไม่พบงานนี้" };
+  }
+
+  const service = createServiceClient();
+  const mergedFields = mergeStudentFields(event.student_fields, discoveredFields);
+
+  if (mergedFields.length > 0) {
+    await service
+      .from("events")
+      .update({ student_fields: mergedFields })
+      .eq("id", eventId);
   }
 
   const rows = students.map((s) => ({
@@ -130,6 +142,7 @@ export async function importStudents(
     nickname: s.nickname,
     instrument: s.instrument,
     teacher_name: s.teacher_name,
+    extra_data: s.extra_data,
     certificate_name_source: s.certificate_name_source,
     certificate_name: s.certificate_name,
   }));
@@ -139,7 +152,7 @@ export async function importStudents(
 
   for (let i = 0; i < rows.length; i += CHUNK) {
     const chunk = rows.slice(i, i + CHUNK);
-    const { error } = await supabase.from("students").insert(chunk);
+    const { error } = await service.from("students").insert(chunk);
     if (error) {
       return { error: error.message, inserted };
     }
@@ -147,6 +160,7 @@ export async function importStudents(
   }
 
   revalidatePath(`/admin/events/${eventId}/import`);
+  revalidatePath(`/admin/events/${eventId}/dashboard`);
   revalidatePath("/admin/events");
   return { success: true, inserted };
 }
@@ -185,11 +199,12 @@ export async function addStudent(eventId: string, data: StudentInput) {
       nickname: normalized.nickname,
       instrument: normalized.instrument,
       teacher_name: normalized.teacher_name,
+      extra_data: normalized.extra_data,
       certificate_name_source: normalized.certificate_name_source,
       certificate_name: normalized.certificate_name,
     })
     .select(
-      "id, full_name, nickname, instrument, teacher_name, certificate_name_source, certificate_name"
+      "id, full_name, nickname, instrument, teacher_name, extra_data, certificate_name_source, certificate_name"
     )
     .single();
 
@@ -207,7 +222,7 @@ export async function updateStudentCertificateName(
   eventId: string,
   studentId: string,
   data: {
-    certificate_name_source: CertificateNameSource | null;
+    certificate_name_source: string | null;
     certificate_name?: string | null;
   }
 ) {
@@ -237,7 +252,52 @@ export async function updateStudentCertificateName(
     .eq("id", studentId)
     .eq("event_id", eventId)
     .select(
-      "id, full_name, nickname, certificate_name_source, certificate_name"
+      "id, full_name, nickname, extra_data, certificate_name_source, certificate_name"
+    )
+    .single();
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath(`/admin/events/${eventId}/dashboard`);
+  revalidatePath(`/admin/events/${eventId}/import`);
+  return { success: true, student };
+}
+
+export async function updateStudent(
+  eventId: string,
+  studentId: string,
+  data: Pick<StudentInput, "full_name" | "nickname">
+) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "กรุณาเข้าสู่ระบบ" };
+  }
+
+  const normalized = normalizeStudentInput({
+    full_name: data.full_name,
+    nickname: data.nickname,
+  });
+  if ("error" in normalized) {
+    return { error: normalized.error };
+  }
+
+  const service = createServiceClient();
+  const { data: student, error } = await service
+    .from("students")
+    .update({
+      full_name: normalized.full_name,
+      nickname: normalized.nickname,
+    })
+    .eq("id", studentId)
+    .eq("event_id", eventId)
+    .select(
+      "id, full_name, nickname, instrument, teacher_name, extra_data, certificate_name_source, certificate_name"
     )
     .single();
 
@@ -318,9 +378,7 @@ export async function saveCertificateSettings(
   data: {
     config: CertificateConfig;
     certificates_released: boolean;
-    templateBase64?: string;
-    templateContentType?: string;
-    templateFileName?: string;
+    templateUrl?: string;
   }
 ) {
   const supabase = createClient();
@@ -342,45 +400,8 @@ export async function saveCertificateSettings(
     return { error: "ไม่พบงานนี้" };
   }
 
-  let templateUrl = existing.certificate_template_url ?? undefined;
-
-  if (data.templateBase64) {
-    try {
-      const service = createServiceClient();
-      const ext =
-        data.templateFileName?.split(".").pop()?.toLowerCase() || "jpg";
-      const path = `${eventId}/${crypto.randomUUID()}.${ext}`;
-      const buffer = Buffer.from(data.templateBase64, "base64");
-
-      const { error: uploadError } = await service.storage
-        .from("certificate-templates")
-        .upload(path, buffer, {
-          contentType: data.templateContentType || "image/jpeg",
-          upsert: false,
-        });
-
-      if (uploadError) {
-        return {
-          error: `อัปโหลดรูปไม่สำเร็จ: ${uploadError.message}`,
-        };
-      }
-
-      const { data: urlData } = service.storage
-        .from("certificate-templates")
-        .getPublicUrl(path);
-      templateUrl = urlData.publicUrl;
-    } catch (e) {
-      const message =
-        e instanceof Error ? e.message : "อัปโหลดรูปไม่สำเร็จ";
-      if (message.includes("SUPABASE_SERVICE_ROLE_KEY")) {
-        return {
-          error:
-            "ไม่พบ SUPABASE_SERVICE_ROLE_KEY ใน .env.local — ดู README หรือรัน supabase/certificate-storage.sql",
-        };
-      }
-      return { error: message };
-    }
-  }
+  const templateUrl =
+    data.templateUrl ?? existing.certificate_template_url ?? undefined;
 
   if (!templateUrl) {
     return { error: "กรุณาอัปโหลดรูป template ก่อนบันทึก" };
@@ -475,5 +496,34 @@ export async function resetRegistration(eventId: string, studentId: string) {
   }
 
   revalidatePath(`/admin/events/${eventId}/dashboard`);
+  return { success: true };
+}
+
+export async function deleteEvent(eventId: string) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "กรุณาเข้าสู่ระบบ" };
+  }
+
+  const service = createServiceClient();
+  const { data, error } = await service
+    .from("events")
+    .delete()
+    .eq("id", eventId)
+    .select("id")
+    .maybeSingle();
+
+  if (error) {
+    return { error: error.message };
+  }
+  if (!data) {
+    return { error: "ไม่พบงานนี้ — อาจถูกลบไปแล้ว" };
+  }
+
+  revalidatePath("/admin/events");
   return { success: true };
 }

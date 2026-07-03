@@ -25,7 +25,6 @@ export default async function CertificatePage({ params }: Props) {
       <AdminPageHeader
         title="ตั้งค่าเกียรติบัตร"
         subtitle={event.name}
-        backHref={`/admin/events/${event.id}/dashboard`}
       />
       <CertificateDesigner
         key={`${event.certificate_template_url ?? "new"}-${JSON.stringify(event.certificate_config ?? {})}`}
