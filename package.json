@@ -13,7 +13,9 @@
     "smoke:add-student": "tsx scripts/smoke-add-student.ts",
     "smoke:certificate-name": "tsx scripts/smoke-certificate-name.ts",
     "sync:july4": "tsx scripts/sync-july4-schedule.ts",
-    "sync:july5": "tsx scripts/sync-july5-schedule.ts"
+    "sync:july5": "tsx scripts/sync-july5-schedule.ts",
+    "sync:july11": "tsx scripts/sync-july11-schedule.ts",
+    "sync:july12": "tsx scripts/sync-july12-schedule.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

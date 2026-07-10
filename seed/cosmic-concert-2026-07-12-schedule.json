@@ -1,0 +1,604 @@
+{
+  "event_name": "Yamaha Cosmic Concert 2026 - 12 ก.ค.",
+  "event_date": "2026-07-12",
+  "copy_fields_from_event_date": "2026-07-05",
+  "notes": [
+    "รายชื่อครบ 99 คน จาก 3 ตาราง (ครูก็อต/ครูค้อ VO + ครูเอกรัตน์/หมู/โอม + ครูโย/กวาง/ต้า PIDA) — 12 ก.ค. 2569"
+  ],
+  "pending_teacher_groups": [],
+  "students": [
+    {
+      "order": 1,
+      "full_name": "ด.ช.Minjoon Kim",
+      "teacher_name": "ครูก็อต"
+    },
+    {
+      "order": 2,
+      "full_name": "ด.ช.พิชญะ สุวรรณรัตน์",
+      "nickname": "กัปตัน",
+      "teacher_name": "ครูก็อต"
+    },
+    {
+      "order": 3,
+      "full_name": "ด.ช.ศรัณย์ โลเยอร์",
+      "nickname": "อัลฟ่า",
+      "teacher_name": "ครูก็อต"
+    },
+    {
+      "order": 4,
+      "full_name": "ด.ญ.ณัฐนรี แสงจันทร์",
+      "nickname": "เกล้า",
+      "teacher_name": "ครูก็อต"
+    },
+    {
+      "order": 5,
+      "full_name": "ด.ญ.กุลจิรา ไชยพงษ์ ขยันกิจ",
+      "nickname": "บุญ",
+      "teacher_name": "ครูค้อ VO"
+    },
+    {
+      "order": 6,
+      "full_name": "ด.ช.ปภัสสพนธ์ นิยมอดุลย์",
+      "nickname": "นาธี",
+      "teacher_name": "ครูค้อ VO"
+    },
+    {
+      "order": 7,
+      "full_name": "ด.ญ.กนกนุช ทิศทองคำ",
+      "nickname": "แสนดี",
+      "teacher_name": "ครูค้อ VO"
+    },
+    {
+      "order": 8,
+      "full_name": "ด.ญ.ชนมน บุญแสง",
+      "nickname": "ลลิล",
+      "teacher_name": "ครูค้อ VO"
+    },
+    {
+      "order": 9,
+      "full_name": "ด.ญ.อภัสฎา ศรีสวัสดิ์",
+      "nickname": "พราว",
+      "teacher_name": "ครูค้อ VO"
+    },
+    {
+      "order": 10,
+      "full_name": "ด.ญ.AnAn Phattaphorn",
+      "nickname": "อันอัน",
+      "teacher_name": "ครูค้อ VO"
+    },
+    {
+      "order": 11,
+      "full_name": "ด.ช.จักรพรรดิ์ ณนคร",
+      "nickname": "ทาม",
+      "teacher_name": "ครูค้อ VO"
+    },
+    {
+      "order": 12,
+      "full_name": "ด.ญ.เฟริน ดันลินสัน",
+      "nickname": "เฟริน",
+      "teacher_name": "ครูค้อ VO"
+    },
+    {
+      "order": 13,
+      "full_name": "ด.ช.ปุณวิทญ์ หลิมพานิชย์",
+      "nickname": "เปเป้",
+      "teacher_name": "ครูค้อ VO"
+    },
+    {
+      "order": 14,
+      "full_name": "ด.ช.ปิติภัทร เชินจาง",
+      "nickname": "คายซิน",
+      "teacher_name": "ครูค้อ VO"
+    },
+    {
+      "order": 15,
+      "full_name": "ด.ญ.อลินดา สุระคณิตย์",
+      "nickname": "อลิน",
+      "teacher_name": "ครูค้อ VO"
+    },
+    {
+      "order": 16,
+      "full_name": "ด.ญ.ธัญญาภรณ์ ซิงห์",
+      "nickname": "ไอวี่",
+      "teacher_name": "ครูค้อ VO"
+    },
+    {
+      "order": 17,
+      "full_name": "ด.ช.ศิวัช อุ่นสอน",
+      "nickname": "ภู",
+      "teacher_name": "ครูค้อ VO"
+    },
+    {
+      "order": 18,
+      "full_name": "ด.ช.ปุณณ ศิรธนาพรกุล",
+      "nickname": "คิน",
+      "teacher_name": "ครูเอกรัตน์ NCGT"
+    },
+    {
+      "order": 19,
+      "full_name": "ด.ช.ปุณภัท ศิรธนาพรกุล",
+      "nickname": "คีธ",
+      "teacher_name": "ครูเอกรัตน์ NCGT"
+    },
+    {
+      "order": 20,
+      "full_name": "ด.ช.ศรัณย์กร ศิริวงศ์",
+      "nickname": "นีโอ",
+      "teacher_name": "ครูเอกรัตน์ NCGT"
+    },
+    {
+      "order": 21,
+      "full_name": "ด.ญ.อิสเบลล่า สันติเจริญชัย",
+      "nickname": "เบลล่า",
+      "teacher_name": "ครูหมู VI"
+    },
+    {
+      "order": 22,
+      "full_name": "ด.ญ.ดลชนก โล่ห์แก้ว",
+      "teacher_name": "ครูหมู VI",
+      "nickname": "วันจันทร์"
+    },
+    {
+      "order": 23,
+      "full_name": "ด.ช.กษฎา สวาทสุต",
+      "nickname": "มาร์ลิน",
+      "teacher_name": "ครูหมู VI"
+    },
+    {
+      "order": 24,
+      "full_name": "ด.ช.ปุณยกร วิเชียรวรรธนะ",
+      "nickname": "ปุณ",
+      "teacher_name": "ครูหมู VI"
+    },
+    {
+      "order": 25,
+      "full_name": "ด.ญ.อนัญพร ศิริวงศ์",
+      "nickname": "นารา",
+      "teacher_name": "ครูหมู VI"
+    },
+    {
+      "order": 26,
+      "full_name": "ด.ช.ปุญญะ กาพย์มณี",
+      "nickname": "ปั้น",
+      "teacher_name": "ครูหมู VI"
+    },
+    {
+      "order": 27,
+      "full_name": "ด.ญ.รุ้งไพลิน เผือกเพ็ชร",
+      "nickname": "มุกกี้",
+      "teacher_name": "ครูหมู VI"
+    },
+    {
+      "order": 28,
+      "full_name": "ด.ญ.ทิพย์วิมล แซ่ล้าย",
+      "nickname": "โบตั๋น",
+      "teacher_name": "ครูหมู VI"
+    },
+    {
+      "order": 29,
+      "full_name": "ด.ญ.ณิชา แซ่ล้าย",
+      "nickname": "ผิงอัน",
+      "teacher_name": "ครูหมู VI"
+    },
+    {
+      "order": 30,
+      "full_name": "ด.ญ.ชัญญภัทร โล่ห์แก้ว",
+      "nickname": "อัญชัน",
+      "teacher_name": "ครูหมู VI"
+    },
+    {
+      "order": 31,
+      "full_name": "ด.ช.ปุณภัท ศิรธนาพรกุล",
+      "nickname": "คีธ",
+      "teacher_name": "ครูหมู VI"
+    },
+    {
+      "order": 32,
+      "full_name": "ด.ญ.จันทร์ธวะดี วรนพกุล",
+      "nickname": "ดวงเดือน",
+      "teacher_name": "ครูหมู VI"
+    },
+    {
+      "order": 33,
+      "full_name": "ด.ญ.ทอฝัน ช่วยพัฒน์",
+      "nickname": "ดรีม",
+      "teacher_name": "ครูหมู VI"
+    },
+    {
+      "order": 34,
+      "full_name": "ด.ช.ฉัตรธวิชญ์ พันธุ์เบญจพล",
+      "nickname": "ปก",
+      "teacher_name": "ครูหมู VI"
+    },
+    {
+      "order": 35,
+      "full_name": "ด.ช.ฉัตรธวัชร์ พันธุ์เบญจพล",
+      "nickname": "ป้อง",
+      "teacher_name": "ครูหมู VI"
+    },
+    {
+      "order": 36,
+      "full_name": "ด.ช.อนพัชร สัตย์พิทักษ์",
+      "nickname": "ฟลุ๊ค",
+      "teacher_name": "ครูหมู VI"
+    },
+    {
+      "order": 37,
+      "full_name": "น.ส.สิริขวัญ งามสงวน",
+      "nickname": "คุณส้ม",
+      "teacher_name": "ครูหมู VI"
+    },
+    {
+      "order": 38,
+      "full_name": "ด.ญ.ภัทรลดา อ่อนกลาง",
+      "nickname": "ขิง",
+      "teacher_name": "ครูโอม VO"
+    },
+    {
+      "order": 39,
+      "full_name": "ด.ญ.ญาณภัทร อ่อนกลาง",
+      "nickname": "บัว",
+      "teacher_name": "ครูโอม VO"
+    },
+    {
+      "order": 40,
+      "full_name": "ด.ญ.แพรพริมา ช่วยบำรุง",
+      "nickname": "ใบเตย",
+      "teacher_name": "ครูโอม VO"
+    },
+    {
+      "order": 41,
+      "full_name": "ด.ช.เวทน เพียรพานิช",
+      "nickname": "อาชา",
+      "teacher_name": "ครูโอม VO"
+    },
+    {
+      "order": 42,
+      "full_name": "ด.ญ.สรัลพร คงค้าง",
+      "nickname": "นาเดียร์",
+      "teacher_name": "ครูโอม VO"
+    },
+    {
+      "order": 43,
+      "full_name": "ด.ญ.ณาณะมิ พัทรพันธ์ โซเน่",
+      "nickname": "นานะ",
+      "teacher_name": "ครูโอม VO"
+    },
+    {
+      "order": 44,
+      "full_name": "ด.ญ.ณฐอร ศักดิ์ศรีสุวรรณ",
+      "nickname": "ยูจิน",
+      "teacher_name": "ครูโอม VO"
+    },
+    {
+      "order": 45,
+      "full_name": "ด.ญ.ณัฐณิชา ปุลปักษ์",
+      "nickname": "เกล",
+      "teacher_name": "ครูโอม VO"
+    },
+    {
+      "order": 46,
+      "full_name": "ด.ช.ศักย์ศรณ์ ตันติพงศ์วิวัฒน์",
+      "nickname": "ต้าหมิง",
+      "teacher_name": "ครูโอม VO"
+    },
+    {
+      "order": 47,
+      "full_name": "ด.ช.ณฐ พรเจริญ",
+      "nickname": "มังกร",
+      "teacher_name": "ครูโอม VO"
+    },
+    {
+      "order": 48,
+      "full_name": "ด.ช.ฐานพัฒน์ ยุติธรรม",
+      "nickname": "ต้นกล้า",
+      "teacher_name": "ครูโอม VO"
+    },
+    {
+      "order": 49,
+      "full_name": "ด.ญ.จิณณ์ณัฐชา ศรีเมืองแก้ว",
+      "nickname": "จีด้า",
+      "teacher_name": "ครูโอม VO"
+    },
+    {
+      "order": 50,
+      "full_name": "ด.ช.ภาคิน ทองศาสตรา",
+      "nickname": "ภาคิน",
+      "teacher_name": "ครูโอม VO"
+    },
+    {
+      "order": 51,
+      "full_name": "นายกรวิชญ์ รัตนวรรณ์",
+      "nickname": "อั้ม",
+      "teacher_name": "ครูโอม VO"
+    },
+    {
+      "order": 52,
+      "full_name": "ด.ช.ปนิธ์ธานพ์ นิยมอดุลย์",
+      "nickname": "นิธาน",
+      "teacher_name": "ครูโอม VO"
+    },
+    {
+      "order": 53,
+      "full_name": "ด.ญ.รมิดา วัชรเดชวิรุณโชติ",
+      "nickname": "แสนดี",
+      "teacher_name": "ครูโอม VO"
+    },
+    {
+      "order": 54,
+      "full_name": "Wichayarporn Seekham",
+      "nickname": "sisi",
+      "teacher_name": "ครูโย"
+    },
+    {
+      "order": 55,
+      "full_name": "ด.ญ.กัญจน์ณิชา อมรสรเดช",
+      "nickname": "มาริน",
+      "teacher_name": "ครูโย"
+    },
+    {
+      "order": 56,
+      "full_name": "ด.ญ.อัญญา ใจรักสกุลหลี่",
+      "nickname": "จูเลีย",
+      "teacher_name": "ครูโย"
+    },
+    {
+      "order": 57,
+      "full_name": "ด.ญ.ภัทรวดี พิมพ์นาจ",
+      "nickname": "โฟกัส",
+      "teacher_name": "ครูโย"
+    },
+    {
+      "order": 58,
+      "full_name": "Ms. AZRIEC TIGGA",
+      "nickname": "Noa",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 59,
+      "full_name": "ด.ญ.อินทิยา อุดมจารุมณี",
+      "nickname": "ขนม",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 60,
+      "full_name": "ด.ญ.ประภัสสรา สุขเสรี",
+      "nickname": "พลอยใส",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 61,
+      "full_name": "ด.ญ.สุภัสสรา สุขเสรี",
+      "nickname": "ไพลิน",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 62,
+      "full_name": "ด.ญ.นริสรา ลอยเลื่อน",
+      "nickname": "ข้าวเหนียว",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 63,
+      "full_name": "ด.ญ.ลัลณ์ลลิน ศิริสวัสดิ์",
+      "nickname": "คุณเธอ",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 64,
+      "full_name": "ด.ญ.จือฉิน หลี่",
+      "nickname": "จือฉิน",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 65,
+      "full_name": "ด.ญ.จันทร์เจ้า เพชรงามพงศ์โนรา",
+      "nickname": "เจอร์นีย์",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 66,
+      "full_name": "ด.ญ.พิชญ์พัชชากานต์ เอ่งฉ้วน",
+      "nickname": "เป่าเป้ย",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 67,
+      "full_name": "Ms. ninang chen",
+      "nickname": "Ninang",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 68,
+      "full_name": "ด.ญ.ปภาดา บุญเสก",
+      "nickname": "เอวา",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 69,
+      "full_name": "ด.ญ.อัญธอร์เนีย ลิตาลยาโน่",
+      "nickname": "อัญธอร์เนีย",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 70,
+      "full_name": "ด.ญ.อชิรญา รัตนบุรี",
+      "nickname": "ซีลีน",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 71,
+      "full_name": "Ms. Yu yan",
+      "nickname": "Bubo",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 72,
+      "full_name": "ด.ญ.ไอยวริญญ์ หนูนุ่น",
+      "nickname": "ไอริทร์",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 73,
+      "full_name": "ด.ญ.เอสเธอร์ ชนะเลิศจตุพร",
+      "nickname": "เอสเธอร์",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 74,
+      "full_name": "ด.ญ.เอยาดารินทร์ พูลสวัสดิ์",
+      "nickname": "เอญ่า",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 75,
+      "full_name": "ด.ญ.สุธาสินี แซ่เย้า",
+      "nickname": "ซวินซวิน",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 76,
+      "full_name": "ด.ญ.จารวี มั่งมีทรัพย์เจริญ",
+      "nickname": "เย่วเย่ว",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 77,
+      "full_name": "ด.ญ.เฮเคียว คัง",
+      "nickname": "เฮเคียว",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 78,
+      "full_name": "ด.ญ.พารินทร์ สงวนทรัพย์",
+      "nickname": "พรรษา",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 79,
+      "full_name": "ด.ญ.อันน์ พัชรบำรุง",
+      "nickname": "อันอัน",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 80,
+      "full_name": "ด.ญ.กมลวรรณ งานเกื้อกูล",
+      "nickname": "มีมี่",
+      "teacher_name": "ครูกวาง PIDA"
+    },
+    {
+      "order": 81,
+      "full_name": "ด.ญ.วรกานต์ คงเกตุ",
+      "nickname": "ว่าน",
+      "teacher_name": "ครูต้า PIDA"
+    },
+    {
+      "order": 82,
+      "full_name": "ด.ญ.ชนม์พิชา มุสิกะ",
+      "nickname": "แก้มบุ๋ม",
+      "teacher_name": "ครูต้า PIDA"
+    },
+    {
+      "order": 83,
+      "full_name": "ด.ญ.กัญณลิญญ์ แก้วยะรัตน์",
+      "nickname": "นลิน",
+      "teacher_name": "ครูต้า PIDA"
+    },
+    {
+      "order": 84,
+      "full_name": "ด.ญ.พรพระจันทร์ ยังจีน",
+      "nickname": "ลูกจันทร์",
+      "teacher_name": "ครูต้า PIDA"
+    },
+    {
+      "order": 85,
+      "full_name": "ด.ญ.ชัญภร หลิมชูตระกูล",
+      "nickname": "ศศิริน",
+      "teacher_name": "ครูต้า PIDA"
+    },
+    {
+      "order": 86,
+      "full_name": "Ms. Chi Yan Hui",
+      "nickname": "karina",
+      "teacher_name": "ครูต้า PIDA"
+    },
+    {
+      "order": 87,
+      "full_name": "ด.ญ.ไอยวริญญ์ หนูนุ่น",
+      "nickname": "ไอรินทร์",
+      "teacher_name": "ครูต้า PIDA"
+    },
+    {
+      "order": 88,
+      "full_name": "ด.ญ.ม่านหนิง หม่า",
+      "nickname": "มิลิน",
+      "teacher_name": "ครูต้า PIDA"
+    },
+    {
+      "order": 89,
+      "full_name": "ด.ญ.มีนตา เพชรพะยอง",
+      "nickname": "สมายด์",
+      "teacher_name": "ครูต้า PIDA"
+    },
+    {
+      "order": 90,
+      "full_name": "ด.ญ.ลัลนา มุสิกะบุตร",
+      "nickname": "เฟย์",
+      "teacher_name": "ครูต้า PIDA"
+    },
+    {
+      "order": 91,
+      "full_name": "ด.ญ.ณฐธิดา แซ่ลิ้ม",
+      "nickname": "มิเกล",
+      "teacher_name": "ครูโย PIDA"
+    },
+    {
+      "order": 92,
+      "full_name": "ด.ญ.จันทนิภา สายสมอ",
+      "nickname": "เชนน่า",
+      "teacher_name": "ครูโย PIDA"
+    },
+    {
+      "order": 93,
+      "full_name": "ด.ญ.อัยย์ญาดา โสดาดี",
+      "nickname": "อัญญา",
+      "teacher_name": "ครูโย PIDA"
+    },
+    {
+      "order": 94,
+      "full_name": "ด.ญ.มินตรา ชูบัวทอง",
+      "nickname": "มินตรา",
+      "teacher_name": "ครูโย PIDA"
+    },
+    {
+      "order": 95,
+      "full_name": "ด.ญ.ธัญภัสร์ วงศ์อ่างแวง",
+      "nickname": "ดาข้าว",
+      "teacher_name": "ครูโย PIDA"
+    },
+    {
+      "order": 96,
+      "full_name": "ด.ช.อิทธิพัทธ์ แซ่เฉ่า",
+      "nickname": "ลูคัส",
+      "teacher_name": "ครูโย PIDA"
+    },
+    {
+      "order": 97,
+      "full_name": "ด.ช.ธีรนัฐ วัชรเดชวิรุณโชติ",
+      "nickname": "ภูผา",
+      "teacher_name": "ครูโย PIDA"
+    },
+    {
+      "order": 98,
+      "full_name": "ด.ญ.พิชญดา เสนีย์",
+      "nickname": "มิลิน",
+      "teacher_name": "ครูโย PIDA"
+    },
+    {
+      "order": 99,
+      "full_name": "ด.ญ.ฤทัยนาถ เลิศนา",
+      "nickname": "แพรชมพู",
+      "teacher_name": "ครูโย PIDA"
+    }
+  ]
+}

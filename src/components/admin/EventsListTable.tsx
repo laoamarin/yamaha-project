@@ -149,7 +149,7 @@ export function EventsListTable({ rows }: Props) {
                     ยังไม่มา
                   </TableHead>
                   <TableHead className="hidden lg:table-cell">สถานะ</TableHead>
-                  <TableHead className="min-w-[9rem]">จัดการ</TableHead>
+                  <TableHead className="w-[3.5rem] text-right">จัดการ</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -213,8 +213,10 @@ export function EventsListTable({ rows }: Props) {
                               <Badge variant="outline">ปิด</Badge>
                             )}
                           </TableCell>
-                          <TableCell>
-                            <EventActionsMenu event={event} />
+                          <TableCell className="text-right">
+                            <div className="flex justify-end">
+                              <EventActionsMenu event={event} />
+                            </div>
                           </TableCell>
                         </TableRow>
                       );
