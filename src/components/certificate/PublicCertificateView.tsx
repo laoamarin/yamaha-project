@@ -13,6 +13,7 @@ type Props = {
   templateUrl: string;
   config: CertificateConfig;
   studentName: string;
+  eventDate: string;
   displayLabel: string;
   filename: string;
 };
@@ -21,6 +22,7 @@ export function PublicCertificateView({
   templateUrl,
   config,
   studentName,
+  eventDate,
   displayLabel,
   filename,
 }: Props) {
@@ -33,6 +35,7 @@ export function PublicCertificateView({
         templateUrl={templateUrl}
         config={config}
         studentName={studentName}
+        eventDate={eventDate}
         maxWidth={640}
         onCanvasReady={(canvas) => {
           canvasRef.current = canvas;

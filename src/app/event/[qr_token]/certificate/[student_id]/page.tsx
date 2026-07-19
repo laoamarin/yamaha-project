@@ -77,6 +77,7 @@ export default async function PublicCertificatePage({ params }: Props) {
           templateUrl={event.certificate_template_url}
           config={config}
           studentName={certificateName}
+          eventDate={event.event_date}
           displayLabel={displayLabel}
           filename={`certificate-${certificateName.replace(/\s+/g, "-")}.png`}
         />

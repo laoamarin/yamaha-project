@@ -1,0 +1,181 @@
+{
+  "event_name": "Yamaha Cosmic Concert 2026 - 19 ก.ค.",
+  "event_date": "2026-07-19",
+  "copy_fields_from_event_date": "2026-07-05",
+  "notes": [
+    "รายชื่อ 29 คน จากตารางงาน Yamaha Cosmic Concert 2026 ประจำวันที่ 19 กรกฎาคม 2569"
+  ],
+  "pending_teacher_groups": [],
+  "students": [
+    {
+      "order": 1,
+      "full_name": "ด.ช.ณัฐธีบุญญ์ บุญรุ่งโรจน์",
+      "nickname": "ปุ่น",
+      "teacher_name": "ครูชาคริต"
+    },
+    {
+      "order": 2,
+      "full_name": "ด.ช.ปวริศ กุลานุรักษ์",
+      "nickname": "ชิโน",
+      "teacher_name": "ครูชาคริต"
+    },
+    {
+      "order": 3,
+      "full_name": "ด.ช.ชยกฤตย์ หนุมาศ",
+      "nickname": "กุญแจ",
+      "teacher_name": "ครูชาคริต"
+    },
+    {
+      "order": 4,
+      "full_name": "ด.ช.ธนโชติ ชูชาติ",
+      "nickname": "คุณ",
+      "teacher_name": "ครูชาคริต"
+    },
+    {
+      "order": 5,
+      "full_name": "ด.ช.ชวินทร์ บิลังโหลด",
+      "nickname": "คีน",
+      "teacher_name": "ครูชาคริต"
+    },
+    {
+      "order": 6,
+      "full_name": "ด.ช.ภูริวัฒ สวัสดี",
+      "nickname": "ภูผา",
+      "teacher_name": "ครูชาคริต"
+    },
+    {
+      "order": 7,
+      "full_name": "นายเมสัน ลีออง โกห์ลามี",
+      "nickname": "ลีโอ",
+      "teacher_name": "ครูชาคริต"
+    },
+    {
+      "order": 8,
+      "full_name": "ด.ญ.ภัณฑิรา ฉันท์ภิญโญภาพ",
+      "teacher_name": "ครูแน็ต"
+    },
+    {
+      "order": 9,
+      "full_name": "ด.ญ.อธีน่า กฤษณาสกุล",
+      "nickname": "อินดี้",
+      "teacher_name": "ครูแน็ต"
+    },
+    {
+      "order": 10,
+      "full_name": "ด.ช.พชร ศรีสวัสดิ์",
+      "nickname": "พฤกษ์",
+      "teacher_name": "ครูแน็ต"
+    },
+    {
+      "order": 11,
+      "full_name": "ด.ช.ผธิศพันธ์ นิวัฒน์ภูมินทร์",
+      "teacher_name": "ครูเมฆ"
+    },
+    {
+      "order": 12,
+      "full_name": "ด.ช.ณัชชานนท์ สนั่นเวียง",
+      "nickname": "ทิววา",
+      "teacher_name": "ครูเมฆ"
+    },
+    {
+      "order": 13,
+      "full_name": "ด.ช.ศิรสิทธิ์ เสรีถวัลย์",
+      "nickname": "อนาวิล",
+      "teacher_name": "ครูเมฆ"
+    },
+    {
+      "order": 14,
+      "full_name": "ด.ญ.นลินนิกา ไทรทอง",
+      "nickname": "นลิน",
+      "teacher_name": "ครูเมฆ"
+    },
+    {
+      "order": 15,
+      "full_name": "ด.ญ.ดมิศรา นิวัฒน์ภูมินทร์",
+      "nickname": "เดมี่",
+      "teacher_name": "ครูเมฆ"
+    },
+    {
+      "order": 16,
+      "full_name": "ด.ญ.บุษกร ต้นสกุล",
+      "nickname": "ปั้นหยา",
+      "teacher_name": "ครูศิลป์"
+    },
+    {
+      "order": 17,
+      "full_name": "ด.ช.คุณธรรม บุตรอินทร์",
+      "nickname": "คุณ",
+      "teacher_name": "ครูเอกชัย"
+    },
+    {
+      "order": 18,
+      "full_name": "ด.ญ.รัญชน์ จิตราคนี",
+      "nickname": "รัญ",
+      "teacher_name": "ครูเอกชัย"
+    },
+    {
+      "order": 19,
+      "full_name": "ด.ญ.เฟริน ดันลินสัน",
+      "nickname": "เฟริน",
+      "teacher_name": "ครูย๊ะ"
+    },
+    {
+      "order": 20,
+      "full_name": "ด.ญ.รมิดา บุญอินทร์",
+      "nickname": "มะลิ",
+      "teacher_name": "ครูเอกชัย"
+    },
+    {
+      "order": 21,
+      "full_name": "น.ส.ชัญญา ไกรทัศน์",
+      "nickname": "ปุ๊กปิ๊ก",
+      "teacher_name": "ครูเอกชัย"
+    },
+    {
+      "order": 22,
+      "full_name": "นายปุลวัชร รักษ์ธรรมกิจ",
+      "teacher_name": "ครูชาคริต"
+    },
+    {
+      "order": 23,
+      "full_name": "น.ส.กัญญารัตน์ ศุภรัตน์วรากุล",
+      "teacher_name": "ครูเอกชัย"
+    },
+    {
+      "order": 24,
+      "full_name": "นายเปรม แสงสวัสดิ์",
+      "nickname": "เจเจ",
+      "teacher_name": "ครูแน็ต"
+    },
+    {
+      "order": 25,
+      "full_name": "ด.ญ.พิมชนก มุสิก",
+      "nickname": "เกรซ",
+      "teacher_name": "ครูชัย"
+    },
+    {
+      "order": 26,
+      "full_name": "ด.ญ.พลอยชมพู มุสิก",
+      "nickname": "แกรนด์",
+      "teacher_name": "ครูชัย"
+    },
+    {
+      "order": 27,
+      "full_name": "ด.ช.ศิลป์ อุ่นทานนท์",
+      "nickname": "กร",
+      "teacher_name": "ครูรินทร์"
+    },
+    {
+      "order": 28,
+      "full_name": "ด.ญ.วรันธร ศิลาวุฒิกุล",
+      "nickname": "หว่าหวา",
+      "teacher_name": "ครูรินทร์"
+    },
+    {
+      "order": 29,
+      "full_name": "ด.ช.ภัทรยัน ตันนฤพงษ์",
+      "nickname": "นาย",
+      "teacher_name": "ครูชาคริต"
+    }
+  ]
+}

@@ -11,16 +11,44 @@ export type StudentField = {
 
 export type CertificateNameFieldKey = string;
 
-export type CertificateConfig = {
-  enabled?: boolean;
-  /** Field key from student columns, e.g. full_name, english_name, no_prefix, custom */
-  default_name_source?: CertificateNameFieldKey;
+export type CertificateTextAlign = "left" | "center" | "right";
+
+export type CertificateDateFormat =
+  | "th_long"
+  | "en_long"
+  | "day"
+  | "day_ordinal"
+  | "month_en"
+  | "year";
+
+export type CertificateTextOverlay = {
+  id: string;
+  label: string;
+  source: "student_name" | "event_date" | "custom";
+  text?: string;
+  date_format?: CertificateDateFormat;
   x_pct: number;
   y_pct: number;
   font_size: number;
   font_color: string;
   font_family: string;
-  align: "left" | "center" | "right";
+  font_weight: 400 | 600 | 700;
+  align: CertificateTextAlign;
+};
+
+export type CertificateConfig = {
+  enabled?: boolean;
+  /** Field key from student columns, e.g. full_name, english_name, no_prefix, custom */
+  default_name_source?: CertificateNameFieldKey;
+  /** Multi-text layout. Missing on legacy configs, which render from the fields below. */
+  overlays?: CertificateTextOverlay[];
+  /** Legacy single-name layout fields, retained for backward compatibility. */
+  x_pct: number;
+  y_pct: number;
+  font_size: number;
+  font_color: string;
+  font_family: string;
+  align: CertificateTextAlign;
 };
 
 export type Event = {

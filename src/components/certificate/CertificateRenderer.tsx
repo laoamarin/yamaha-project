@@ -2,6 +2,7 @@
 
 import {
   drawCertificate,
+  getCertificateOverlays,
   loadCertificateFont,
 } from "@/lib/certificate-utils";
 import type { CertificateConfig } from "@/types/database";
@@ -13,6 +14,7 @@ type Props = {
   templateUrl: string;
   config: CertificateConfig;
   studentName: string;
+  eventDate?: string;
   maxWidth?: number;
   className?: string;
   onCanvasReady?: (canvas: HTMLCanvasElement) => void;
@@ -22,6 +24,7 @@ export function CertificateRenderer({
   templateUrl,
   config,
   studentName,
+  eventDate,
   maxWidth = 640,
   className,
   onCanvasReady,
@@ -39,7 +42,11 @@ export function CertificateRenderer({
     setError(null);
 
     try {
-      await loadCertificateFont(config.font_family);
+      await Promise.all(
+        getCertificateOverlays(config).map((overlay) =>
+          loadCertificateFont(overlay.font_family)
+        )
+      );
 
       if (!imgRef.current || imgRef.current.src !== templateUrl) {
         const img = new Image();
@@ -56,7 +63,7 @@ export function CertificateRenderer({
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
 
-      drawCertificate(ctx, img, config, studentName);
+      drawCertificate(ctx, img, config, studentName, eventDate);
 
       canvas.style.width = `${maxWidth}px`;
       canvas.style.height = "auto";
@@ -67,7 +74,7 @@ export function CertificateRenderer({
     } finally {
       setLoading(false);
     }
-  }, [templateUrl, config, studentName, maxWidth, onCanvasReady]);
+  }, [templateUrl, config, studentName, eventDate, maxWidth, onCanvasReady]);
 
   useEffect(() => {
     render();

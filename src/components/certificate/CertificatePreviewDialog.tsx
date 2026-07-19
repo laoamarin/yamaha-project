@@ -49,6 +49,7 @@ export function CertificatePreviewDialog({
           templateUrl={templateUrl}
           config={config}
           studentName={studentName}
+          eventDate={event.event_date}
           maxWidth={560}
           onCanvasReady={(canvas) => {
             canvasRef.current = canvas;

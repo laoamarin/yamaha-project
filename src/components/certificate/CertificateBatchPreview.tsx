@@ -59,6 +59,7 @@ export function CertificateBatchPreview({ event, students, backHref }: Props) {
             templateUrl,
             config,
             displayName,
+            event.event_date,
             templateImg
           );
           rendered.push({ student, canvas });
@@ -83,7 +84,14 @@ export function CertificateBatchPreview({ event, students, backHref }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [templateUrl, config, students, eventDefault, event.student_fields]);
+  }, [
+    templateUrl,
+    config,
+    students,
+    eventDefault,
+    event.event_date,
+    event.student_fields,
+  ]);
 
   const handlePrint = useCallback(() => {
     window.print();
